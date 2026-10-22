@@ -1,4 +1,4 @@
-import {WEB_ORGANISMS,WEB_POSITIONS,webName,webEdgeGeometry,isBaseEdge} from './food-web.js';
+import {WEB_ORGANISMS,WEB_POSITIONS,WEB_EDGES,webName,webEdgeGeometry,isBaseEdge,webEdgeKey} from './web-ecosystem.js';
 import {drawWebPicture} from './web-art.js';
 
 function reportBox(c,x,y,width,height,radius,color){c.fillStyle=color;c.beginPath();c.roundRect(x,y,width,height,radius);c.fill();}
@@ -11,16 +11,16 @@ function reportWrap(c,text,width){
   if(line)lines.push(line);return lines;
 }
 export function drawFoodWebReport(canvas,activity){
-  canvas.width=1600;canvas.height=1420;
+  canvas.width=1600;canvas.height=1700;
   const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;
-  c.fillStyle='#fffdf3';c.fillRect(0,0,1600,1420);
+  c.fillStyle='#fffdf3';c.fillRect(0,0,1600,1700);
   c.fillStyle='#78955e';c.font='bold 22px system-ui, sans-serif';c.fillText('4학년 과학 · 나의 먹이그물 탐험',64,62);
   c.fillStyle='#345a42';c.font='bold 46px system-ui, sans-serif';c.fillText('먹이사슬들이 만나 먹이그물이 되었어요',64,128);
-  c.font='24px system-ui, sans-serif';c.fillText('7종류 생물 · 10개 먹이관계    |    먹히는 생물 → 먹는 생물',64,175);
-  reportBox(c,54,205,1492,845,24,'#edf4e4');
+  c.font='24px system-ui, sans-serif';c.fillText(`10종류 생물 · 17개 먹이관계    |    직접 만난 관계 ${activity.encountered.size}개`,64,175);
+  reportBox(c,54,205,1492,1010,24,'#edf4e4');
   c.save();c.translate(64,220);c.scale(1.472,1.472);
-  for(const [food,eater] of activity.edges){
-    const {start,end,c1,c2}=webEdgeGeometry(food,eater),color=isBaseEdge(food,eater)?'#5e8858':'#be8437';
+  for(const [food,eater] of WEB_EDGES){
+    const {start,end,c1,c2}=webEdgeGeometry(food,eater),color=activity.encountered.has(webEdgeKey(food,eater))?'#bd8434':isBaseEdge(food,eater)?'#5e8858':'#94a69a';
     c.strokeStyle=color;c.fillStyle=color;c.lineWidth=3;
     c.beginPath();c.moveTo(...start);c.bezierCurveTo(...c1,...c2,...end);c.stroke();
     const angle=Math.atan2(end[1]-c2[1],end[0]-c2[0]);
@@ -33,15 +33,17 @@ export function drawFoodWebReport(canvas,activity){
     c.fillStyle='#345a42';c.font='bold 17px system-ui, sans-serif';c.textAlign='center';c.fillText(webName(id),x,y+47);
   }
   c.restore();c.textAlign='left';
-  c.fillStyle='#7b8d6c';c.font='19px system-ui, sans-serif';c.fillText('초록 화살표: 가져온 먹이사슬     갈색 화살표: 새로 더한 먹이관계',82,1020);
-  c.fillStyle='#477956';c.font='bold 25px system-ui, sans-serif';c.fillText('내가 찾은 근거',64,1096);
-  c.fillStyle='#526948';c.font='25px system-ui, sans-serif';c.fillText('개구리를 가려도 생쥐 → 뱀, 참새 → 뱀 관계가 남아 있었어요.',64,1137);
-  c.fillStyle='#477956';c.font='bold 25px system-ui, sans-serif';c.fillText('나의 생각',64,1190);
+  c.fillStyle='#7b8d6c';c.font='19px system-ui, sans-serif';c.fillText('금색: 직접 만난 관계   ·   초록: 처음 먹이사슬   ·   회색: 더 살펴볼 관계',82,1190);
+  c.fillStyle='#477956';c.font='bold 25px system-ui, sans-serif';c.fillText('내가 고른 동물',64,1260);
+  c.font='24px system-ui, sans-serif';c.fillText([...new Set(activity.records.map(record=>webName(record.kind)))].join(' · '),64,1300);
+  c.font='bold 25px system-ui, sans-serif';c.fillText('그림에서 찾은 근거',64,1360);
+  c.fillStyle='#526948';c.font='25px system-ui, sans-serif';c.fillText('개구리를 가려도 뱀은 생쥐와 참새를 먹을 수 있었어요.',64,1400);
+  c.fillStyle='#477956';c.font='bold 25px system-ui, sans-serif';c.fillText('나의 생각',64,1460);
   c.fillStyle='#345a42';c.font='26px system-ui, sans-serif';
   const lines=reportWrap(c,activity.reflection.replace(/\s+/g,' ').trim(),1465);
-  lines.forEach((line,i)=>c.fillText(line,64,1232+i*35));
+  lines.forEach((line,i)=>c.fillText(line,64,1500+i*35));
   c.fillStyle='#839478';c.font='18px system-ui, sans-serif';
-  c.fillText('대표 먹이관계를 단순화한 학습 모형이에요. 실제 먹이는 생물의 종류와 계절 등에 따라 달라질 수 있어요.',64,1384);
+  c.fillText('대표 먹이관계를 단순화한 학습 모형이에요. 실제 먹이는 생물의 종류와 계절 등에 따라 달라질 수 있어요.',64,1666);
   return canvas;
 }
 export function downloadFoodWebReport(activity){

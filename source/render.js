@@ -1,4 +1,4 @@
-import {W,H,JUMP_DURATION,JUMP_HEIGHT,ROLES,REEDS,ROCKS,TREES,hideProtected,visibleTo,canEat,dist} from './engine.js';
+import {W,H,JUMP_DURATION,JUMP_HEIGHT,ROLES,REEDS,ROCKS,TREES,hideProtected,visibleTo,canEat,canConsume,dist} from './engine.js';
 import {MAP_MARGIN,MAP_WIDTH,MAP_HEIGHT,project,unproject,facingFrame} from './projection.js';
 import {ASSET_FRAMES} from './asset-frames.js';
 import {MotionView,gaitPose} from './motion-view.js';
@@ -25,7 +25,8 @@ function sprite(c,img,cell,x,y,size){
   c.drawImage(img,frame.x,frame.y,frame.w,frame.h,x-frame.w*scale/2,y-frame.h*scale,frame.w*scale,frame.h*scale);return true;
 }
 export class Renderer{
-  constructor(canvas,onMove){
+  constructor(canvas,onMove,artwork={}){
+    this.artwork=artwork;
     this.canvas=canvas;this.c=canvas.getContext('2d');this.positions={};this.motion=new MotionView();this.camera={x:MAP_WIDTH/2,y:MAP_HEIGHT/2};this.last=performance.now();
     this.terrain=document.createElement('canvas');this.terrain.width=MAP_WIDTH/4;this.terrain.height=MAP_HEIGHT/4;this.paintTerrain();
     this.resize=new ResizeObserver(()=>this.fit());this.resize.observe(canvas);this.fit();
@@ -52,7 +53,8 @@ export class Renderer{
   }
   prop(c,type,p,size,alpha=1){
     const v=project(p.x,p.y);c.save();c.globalAlpha=alpha;c.fillStyle='#416c4030';c.beginPath();c.ellipse(v.x,v.y,size*.29,size*.09,0,0,7);c.fill();
-    if(!sprite(c,props,type,v.x,v.y,size)){c.fillStyle=['#5b994e','#9d9a9d','#74a64b','#d1bc58'][type];box(c,v.x-size*.3,v.y-size*.6,size*.6,size*.6,20);c.fill();}c.restore();
+    const painted=p.kind==='clover'?this.artwork.drawPlant?.(c,p,v.x,v.y,size):sprite(c,props,type,v.x,v.y,size);
+    if(!painted){c.fillStyle=['#5b994e','#9d9a9d','#74a64b','#d1bc58'][type];box(c,v.x-size*.3,v.y-size*.6,size*.6,size*.6,20);c.fill();}c.restore();
   }
   pawn(c,p,pos,me,now){
     const v=project(pos.x,pos.y),role=p.role,size=role===3?65:58,pose=gaitPose(role,pos.walk,pos.moveBlend||0,now,p.base);
@@ -68,10 +70,10 @@ export class Renderer{
     if(p.effect>0&&role===1){const end=project(pos.x+Math.cos(p.angle)*130,pos.y+Math.sin(p.angle)*130,15);c.strokeStyle='#ef93a1';c.lineWidth=5;c.lineCap='round';c.beginPath();c.moveTo(v.x,v.y-18);c.lineTo(end.x,end.y);c.stroke();}
     const pixels=this.scale*this.dpr,snapX=Math.round((v.x+pose.sway-this.left)*pixels)/pixels+this.left,snapY=Math.round((v.y-lift-this.top)*pixels)/pixels+this.top;
     c.save();c.translate(snapX,snapY);c.filter=p.skin===1?'brightness(1.08) saturate(1.13) hue-rotate(-10deg)':p.skin===2?'brightness(.96) hue-rotate(15deg)':'none';
-    if(!sprite(c,animals,role*4+(pos.facing??facingFrame(p.angle)),0,0,size)){c.font='36px sans-serif';c.textAlign='center';c.fillText(ROLES[role].emoji,0,-6);}c.restore();
-    const fs=Math.max(13,11/this.scale),label=p.bot?'숲 친구':p.label;c.font=`${p.id===me?.id?'bold ':''}${fs}px "Noto Sans KR",sans-serif`;c.textAlign='center';const tw=c.measureText(label).width;
+    if(!this.artwork.drawAnimal?.(c,p,pos.facing??facingFrame(p.angle),size)&&!sprite(c,animals,role*4+(pos.facing??facingFrame(p.angle)),0,0,size)){c.font='36px sans-serif';c.textAlign='center';c.fillText(ROLES[role].emoji,0,-6);}c.restore();
+    const fs=Math.max(13,11/this.scale),label=p.bot?(this.artwork.nameFor?.(p)||'숲 친구'):p.label;c.font=`${p.id===me?.id?'bold ':''}${fs}px "Noto Sans KR",sans-serif`;c.textAlign='center';const tw=c.measureText(label).width;
     c.fillStyle=p.id===me?.id?'#326c52':'#fffef1f0';box(c,v.x-tw/2-6,v.y+9,tw+12,fs+7,6);c.fill();c.fillStyle=p.id===me?.id?'#fffef1':'#3b6346';c.fillText(label,v.x,v.y+fs+10);
-    if(p.id===me?.id){c.font='bold 13px "Noto Sans KR",sans-serif';c.fillStyle='#24523c';c.fillText(p.hidden?(hideProtected(p)?'숨기 보호 중':'숨기 보호 끝'):`나 · ${ROLES[role].name}`,v.x,v.y-size-lift-9);}c.restore();
+    if(p.id===me?.id){c.font='bold 13px "Noto Sans KR",sans-serif';c.fillStyle='#24523c';c.fillText(p.hidden?(hideProtected(p)?'숨기 보호 중':'숨기 보호 끝'):`나 · ${this.artwork.nameFor?.(p)||ROLES[role].name}`,v.x,v.y-size-lift-9);}c.restore();
   }
   draw(world,myId,teacher=false,options={}){
     if(!world)return;const c=this.c,now=performance.now(),dt=Math.min((now-this.last)/1000,.1);this.last=now;
@@ -96,12 +98,12 @@ export class Renderer{
       if(o.kind==='rice')this.prop(c,3,o.p,43,o.p.ready>0?.22:1);
     }
     c.font='14px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillStyle='#3f6a3a';for(const r of REEDS){const v=project(r.x,r.y);c.fillText('숨는 풀숲',v.x,v.y+83);}
-    for(const e of world.events||[]){const age=world.t-e.at;if(age<0||age>1.2||e.type==='skill')continue;const v=project(e.x,e.y);c.globalAlpha=1-age/1.2;c.font='bold 19px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillStyle='#fffdeb';c.strokeStyle='#436343';c.lineWidth=4;const txt=e.type==='rice'?'벼 → 메뚜기':`${ROLES[e.from].name} → ${ROLES[e.to].name}`;c.strokeText(txt,v.x,v.y-70-age*30);c.fillText(txt,v.x,v.y-70-age*30);c.globalAlpha=1;}
+    for(const e of world.events||[]){const age=world.t-e.at;if(age<0||age>1.2||e.type==='skill')continue;const v=project(e.x,e.y);c.globalAlpha=1-age/1.2;c.font='bold 19px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillStyle='#fffdeb';c.strokeStyle='#436343';c.lineWidth=4;const txt=this.artwork.eventText?.(e)||(e.type==='rice'?'벼 → 메뚜기':`${ROLES[e.from].name} → ${ROLES[e.to].name}`);c.strokeText(txt,v.x,v.y-70-age*30);c.fillText(txt,v.x,v.y-70-age*30);c.globalAlpha=1;}
     c.setTransform(this.dpr,0,0,this.dpr,0,0);
-    if(me&&!teacher){const danger=all.some(p=>canEat(p.role,me.role)&&p.respawn<=0&&visibleTo(me,p)&&dist(p,me)<230);if(danger){const g=c.createRadialGradient(width/2,height/2,Math.min(width,height)*.3,width/2,height/2,Math.max(width,height)*.6);g.addColorStop(0,'transparent');g.addColorStop(1,'#cc87525c');c.fillStyle=g;c.fillRect(0,0,width,height);}this.minimap(c,world,me,width,height);}
+    if(me&&!teacher){const danger=all.some(p=>canConsume(world,p,me)&&p.respawn<=0&&visibleTo(me,p)&&dist(p,me)<230);if(danger){const g=c.createRadialGradient(width/2,height/2,Math.min(width,height)*.3,width/2,height/2,Math.max(width,height)*.6);g.addColorStop(0,'transparent');g.addColorStop(1,'#cc87525c');c.fillStyle=g;c.fillRect(0,0,width,height);}this.minimap(c,world,me,width,height);}
   }
   minimap(c,world,me,width,height){
     const mw=152,mh=108,mx=width-mw-14,my=height-mh-14;c.save();c.fillStyle='#fffdf0f5';box(c,mx,my,mw,mh,12);c.fill();const scale=Math.min((mw-20)/W,(mh-32)/H),ox=mx+(mw-W*scale)/2,oy=my+9,to=p=>({x:ox+p.x*scale,y:oy+p.y*scale});c.fillStyle='#c1da9e';box(c,ox,oy,W*scale,H*scale,4);c.fill();
-    for(const r of REEDS){const p=to(r);c.fillStyle='#5a8b58';c.beginPath();c.arc(p.x,p.y,3,0,7);c.fill();}if(me.role===0){for(const f of world.plants){if(f.ready>0)continue;const p=to(f);c.fillStyle='#b18c3d';c.fillRect(p.x-1,p.y-1,2,2);}}else{for(const food of Object.values(world.players)){if(!food.online||food.respawn>0||!canEat(me.role,food.role)||!visibleTo(me,food))continue;const p=to(food);c.fillStyle='#d49a36';c.beginPath();c.arc(p.x,p.y,2.5,0,7);c.fill();}}const p=to(me);c.fillStyle='#285d49';c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,4,0,7);c.fill();c.stroke();c.font='11px "Noto Sans KR",sans-serif';c.fillStyle='#526c47';c.textAlign='center';c.fillText('나의 위치 · 먹이 장소',mx+mw/2,my+mh-9);c.restore();
+    for(const r of REEDS){const p=to(r);c.fillStyle='#5a8b58';c.beginPath();c.arc(p.x,p.y,3,0,7);c.fill();}if(me.role===0||world.foodWeb){for(const f of world.plants){if(f.ready>0||world.foodWeb&&!canConsume(world,me,f))continue;const p=to(f);c.fillStyle='#b18c3d';c.fillRect(p.x-1,p.y-1,2,2);}}if(me.role>0||world.foodWeb){for(const food of Object.values(world.players)){if(!food.online||food.respawn>0||!canConsume(world,me,food)||!visibleTo(me,food))continue;const p=to(food);c.fillStyle='#d49a36';c.beginPath();c.arc(p.x,p.y,2.5,0,7);c.fill();}}const p=to(me);c.fillStyle='#285d49';c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,4,0,7);c.fill();c.stroke();c.font='11px "Noto Sans KR",sans-serif';c.fillStyle='#526c47';c.textAlign='center';c.fillText('나의 위치 · 먹이 장소',mx+mw/2,my+mh-9);c.restore();
   }
 }

@@ -30,3 +30,19 @@ Use case: scientific-educational. Asset type: one transparent sprite for a Korea
 
 source/assets/sparrow.png — 최종 프롬프트
 Use case: scientific-educational. Asset type: one transparent sprite for a Korean elementary food web game. Make ONE cute recognizable Eurasian tree sparrow in crisp 16-bit pixel art: chestnut brown head cap, pale cheeks with black cheek spot, short conical beak, black bib, striped warm brown wings, light cream belly, short tail and two tiny bird feet. Perched naturally in three-quarter side view facing left, wings closed, no perch object. Warm earthy brown and cream limited palette, chunky visible square pixels, dark brown outline and three-step pixel shading, no smooth painting. Match a charming retro forest game with green frog, grasshopper, brown snake and hawk sprites. Full bird centered, fills about 75 percent of a square canvas, generous transparent margin. True transparent alpha background. No platform, no scenery, no shadow, no clothes, no letters, no words, no numbers, no border.
+
+=== 개인용 1.6: 같은 화풍의 선택형 먹이그물 에셋 (2026-10-22) ===
+방식: 내장 image_gen 도구, 투명 배경 생성. 외부 이미지 복제나 CLI/API 사용 없음.
+스타일 참고: 기존 assets/animals-pixel.png의 메뚜기/개구리/뱀/매 방향 시트.
+참새/생쥐의 이전 자연스러운 세밀화 PNG는 같은 도트 화풍의 새 시트로 교체함.
+
+저장한 원본 (두 생성 결과의 PNG 바이트를 그대로 복사):
+source/assets/web-animals-pixel.png — 1254×1254, RGBA 투명, 4동물×4방향.
+source/assets/clover-pixel.png — 1254×1254, RGBA 투명.
+source/web-asset-frames.js — 실제 알파 경계로 표시 범위를 기록. 원본 이미지를 잘라 덮어쓰지 않음.
+
+최종 동물 시트 프롬프트:
+Use case: stylized-concept. Asset type: one cohesive production-ready four-by-four animal sprite atlas for an elementary food-web RPG. Existing grasshopper/frog/snake/hawk atlas is a STYLE REFERENCE ONLY. Match cute chibi proportions, huge simple dark glossy eyes, thick near-black stepped pixel outlines, blocky 16-bit shading, warm friendly colors and crisp pixel texture. New rows: brown sparrow with short pointed beak and white cheeks; warm gray-brown mouse with big pink ears, creamy belly and thin tail; friendly purple-brown spider with two body segments and eight legs, no antennae; white-and-cream rabbit with long pink-lined ears and fluffy tail. Columns: front, left, right, back. Preserve character identity and scale across directions. One complete isolated animal per cell, transparent gutters, consistent feet baseline. No labels, text, grid, background shadow, terrain, photorealism, watercolor or naturalistic fur/feather detail. True alpha transparency.
+
+최종 토끼풀 프롬프트:
+Use case: stylized-concept. Asset type: one isolated white clover resource sprite for the same cute 16-bit ecology RPG. Match the reference atlas's crisp blocky shading, thick dark stepped outlines and bright warm palette. Compact clump of Trifolium repens: trifoliate leaves with three rounded green leaflets and pale chevrons, two small round white flower heads with light pink centers on short stalks, a few grass blades at the base. Readable as a tiny game prop, chunky shapes, dark green outline, limited green-and-cream palette, centered with transparent margins. No pot, roots, soil square, ground shadow, face, eyes, text or realistic botanical rendering. True transparent background.

@@ -1,49 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {FoodWebActivity,WEB_ORGANISMS,WEB_EDGES,WEB_BASE_EDGES,WEB_PATHS,WEB_POSITIONS,webEdgeGeometry,webEdgeKey} from '../source/food-web.js';
-function completeGames(){
-  const a=new FoodWebActivity();a.begin();
-  for(let level=0;level<4;level++){
-    for(const food of a.hunt.foods){const target=a.hunt.actors.find(p=>p.kind===food&&p.respawn===0);target.x=a.hunt.me.x;target.y=a.hunt.me.y;a.tick({},1/60);}
-    assert.equal(a.hunt.phase,'roundEnd');assert.equal(a.advanceHunt(),true);
+import {FoodWebActivity} from '../source/food-web.js';
+import {WEB_ORGANISMS,WEB_EDGES,WEB_ANIMALS,WEB_BASE_EDGES,WEB_PATHS,WEB_POSITIONS,webEdgeGeometry,webEdgeKey} from '../source/web-ecosystem.js';
+function trial(a,kind){a.selectAnimal(kind);a.begin();a.endTrial();assert.equal(a.answerQuiz(a.hunt.quiz.quiz.answer),true);return a;}
+function review(){const a=trial(new FoodWebActivity(),'rabbit');a.review();return a;}
+test('the expanded web has ten organisms and seventeen distinct supported relations',()=>{
+  assert.equal(Object.keys(WEB_ORGANISMS).length,10);assert.equal(WEB_ANIMALS.length,8);assert.equal(WEB_EDGES.length,17);assert.equal(new Set(WEB_EDGES.map(e=>webEdgeKey(...e))).size,17);
+  for(const path of WEB_PATHS)for(let i=0;i<path.length-1;i++)assert.ok(WEB_EDGES.some(([food,eater])=>food===path[i]&&eater===path[i+1]));
+});
+test('the learner must select an animal and may choose freely instead of following a fixed sequence',()=>{
+  const a=new FoodWebActivity();assert.deepEqual(a.edges,WEB_BASE_EDGES);assert.equal(a.begin(),false);assert.equal(a.selectAnimal('clover'),false);
+  for(const kind of ['hawk','spider','rabbit','hawk']){trial(a,kind);assert.equal(a.chooseAgain(),true);}
+  assert.deepEqual(a.records.map(record=>record.kind),['hawk','spider','rabbit','hawk']);
+});
+test('the result quiz gates both another animal and the web review without requiring every role',()=>{
+  const a=new FoodWebActivity();a.selectAnimal('mouse');a.begin();assert.equal(a.chooseAgain(),false);assert.equal(a.review(),false);a.endTrial();
+  const q=a.hunt.quiz.quiz;assert.equal(a.answerQuiz(q.choices.find(id=>id!==q.answer)),false);assert.equal(a.review(),false);assert.equal(a.chooseAgain(),false);
+  a.answerQuiz(q.answer);assert.equal(a.records.length,1);assert.equal(a.answerQuiz(q.answer),false);assert.equal(a.records.length,1);assert.equal(a.review(),true);assert.equal(a.stage,'observe');
+});
+test('only learner eating/caught events mark a directly experienced relation',()=>{
+  const a=new FoodWebActivity();a.selectAnimal('frog');a.begin();assert.equal(a.encountered.size,0);a.tick({},1/60);assert.equal(a.encountered.size,0);
+  const food=a.hunt.actors.find(p=>p.kind==='spider');Object.assign(a.hunt.me,{x:700,y:450,protect:100,eatWait:0});Object.assign(food,{x:700,y:450,protect:0,respawn:0,hidden:false,effect:0,bot:false});a.tick({},1/60);
+  assert.equal(a.encountered.has('spider>frog'),true);assert.equal(a.learn('spider','frog'),false);assert.equal(a.learn('rabbit','rice'),false);
+});
+test('hiding the frog removes exactly its three direct relations and keeps two other snake foods',()=>{
+  const a=review(),before=JSON.stringify(a.edges);a.toggleFrog();assert.deepEqual(a.neighbors('snake').food.sort(),['mouse','sparrow']);assert.equal(JSON.stringify(a.edges),before);a.toggleFrog();assert.deepEqual(a.neighbors('snake').food.sort(),['frog','mouse','sparrow']);
+});
+test('both image alternatives must be found even when the learner chose another animal',()=>{
+  const a=review();assert.equal(a.answerAlternative('mouse'),false);a.toggleFrog();assert.equal(a.answerAlternative('grasshopper'),false);a.answerAlternative('mouse');a.answerAlternative('mouse');assert.equal(a.next(),false);a.answerAlternative('sparrow');assert.equal(a.next(),true);assert.equal(a.stage,'reflect');
+});
+test('reflection remains bounded and independent and completed learners can select another animal',()=>{
+  const a=review();a.toggleFrog();a.answerAlternative('mouse');a.answerAlternative('sparrow');a.next();a.setReflection('  ');assert.equal(a.next(),false);a.setReflection('가'.repeat(200));assert.equal(a.reflection.length,180);a.setReflection('토끼는 토끼풀을 먹고 매에게 먹힐 수 있어요.');assert.equal(a.next(),true);assert.equal(a.stage,'complete');assert.equal(a.chooseAgain(),true);assert.equal(a.records.length,1);assert.equal(new FoodWebActivity().reflection,'');
+});
+test('curve arrows stay outside cards and do not pass through an unrelated organism',()=>{
+  for(const [food,eater] of WEB_EDGES){const {start,end,c1,c2}=webEdgeGeometry(food,eater),[x,y]=WEB_POSITIONS[eater];assert.ok(Math.abs(end[0]-x)>=57.9||Math.abs(end[1]-y)>=69.9);
+    for(let i=0;i<=100;i++){const t=i/100,u=1-t,px=u*u*u*start[0]+3*u*u*t*c1[0]+3*u*t*t*c2[0]+t*t*t*end[0],py=u*u*u*start[1]+3*u*u*t*c1[1]+3*u*t*t*c2[1]+t*t*t*end[1];
+      for(const [id,[cx,cy]] of Object.entries(WEB_POSITIONS))if(id!==food&&id!==eater)assert.ok(Math.abs(px-cx)>54||Math.abs(py-cy)>66,`${food}>${eater} crosses ${id}`);
+    }
   }
-  return a;
-}
-test('the activity brings in the original chain and starts a movable multi-food game',()=>{
-  const a=new FoodWebActivity();assert.deepEqual(a.edges,WEB_BASE_EDGES);assert.equal(a.next(),false);
-  assert.equal(Object.keys(WEB_ORGANISMS).length,7);assert.equal(new Set(WEB_EDGES.map(e=>webEdgeKey(...e))).size,10);
-  a.begin();assert.equal(a.stage,'play');assert.equal(a.hunt.role,'sparrow');assert.deepEqual(a.hunt.foods,['rice','grasshopper']);
-});
-test('only actual valid eating encounters add relations and repeated foods do not duplicate them',()=>{
-  const a=new FoodWebActivity();a.begin();assert.equal(a.edges.length,4);a.tick({},1/60);assert.equal(a.edges.length,4);
-  const rice=a.hunt.actors.find(p=>p.kind==='rice');rice.x=a.hunt.me.x;rice.y=a.hunt.me.y;a.tick({},1/60);
-  assert.equal(a.hasEdge('rice','sparrow'),true);assert.equal(a.edges.length,5);
-  assert.equal(a.learn('rice','sparrow'),false);assert.equal(a.learn('hawk','rice'),false);assert.equal(a.edges.length,5);
-  assert.equal(a.advanceHunt(),false);assert.equal(a.next(),false);
-});
-test('four game missions earn all ten web relations before the observation stage',()=>{
-  const a=completeGames();assert.equal(a.complete,true);assert.equal(a.stage,'observe');assert.equal(a.edges.length,10);
-  assert.equal(a.hunt.records.length,4);assert.deepEqual(a.hunt.records.map(r=>r.role),['sparrow','mouse','snake','hawk']);
-  for(const path of WEB_PATHS)for(let i=0;i<path.length-1;i++)assert.equal(a.hasEdge(path[i],path[i+1]),true);
-});
-test('hiding the frog dims only its direct links while keeping two other snake foods',()=>{
-  const a=completeGames(),before=JSON.stringify(a.edges);a.toggleFrog();
-  assert.deepEqual(a.neighbors('snake').food.sort(),['mouse','sparrow']);assert.equal(JSON.stringify(a.edges),before);
-  a.toggleFrog();assert.deepEqual(a.neighbors('snake').food.sort(),['frog','mouse','sparrow']);
-});
-test('both alternatives must be found after hiding the frog to continue',()=>{
-  const a=completeGames();assert.equal(a.answerAlternative('mouse'),false);a.toggleFrog();
-  assert.equal(a.answerAlternative('grasshopper'),false);a.answerAlternative('mouse');a.answerAlternative('mouse');assert.equal(a.alternatives.size,1);assert.equal(a.next(),false);
-  a.answerAlternative('sparrow');assert.equal(a.next(),true);assert.equal(a.stage,'reflect');assert.equal(a.removed,null);
-});
-test('reflection is limited, requires nonblank text and stays independent for each instance',()=>{
-  const a=completeGames();a.toggleFrog();a.answerAlternative('mouse');a.answerAlternative('sparrow');a.next();
-  a.setReflection('  ');assert.equal(a.next(),false);a.setReflection('가'.repeat(200));assert.equal(a.reflection.length,180);
-  a.setReflection('뱀이 개구리뿐 아니라 생쥐와 참새도 먹었어요.');assert.equal(a.next(),true);assert.equal(a.stage,'complete');
-  assert.equal(new FoodWebActivity().reflection,'');
-});
-test('result arrows end outside eater cards, and highlighting never changes the learned graph',()=>{
-  const a=completeGames(),before=JSON.stringify(a.edges);
-  for(const [food,eater] of WEB_EDGES){const g=webEdgeGeometry(food,eater),[x,y]=WEB_POSITIONS[eater];assert.ok(Math.hypot(g.end[0]-x,g.end[1]-y)>57);assert.ok(g.end[0]<x);}
-  a.showPath(1);assert.equal(a.highlightPath,1);a.inspect('snake');assert.equal(a.highlightPath,null);assert.equal(JSON.stringify(a.edges),before);
 });

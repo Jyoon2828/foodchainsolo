@@ -21,6 +21,10 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 export const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 export const roleFor=(base,round)=>((base+round)%4+4)%4;
 export const canEat=(predator,prey)=>predator>=1 && predator<=3 && predator===prey+1;
+export function canConsume(world,eater,food){
+  if(world.foodWeb)return (world.diet||[]).some(([a,b])=>a===food.kind&&b===eater.kind);
+  return food.kind==='rice'?eater.role===0:canEat(eater.role,food.role);
+}
 export const inReeds=p=>REEDS.some(r=>dist(r,p)<r.r);
 export const inCover=p=>inReeds(p)||TREES.some(t=>dist(t,p)<t.r+65);
 export const hideProtected=p=>!!p.hidden&&(p.hideTime||0)<HIDE_DURATION;
@@ -86,9 +90,9 @@ export function startRound(world,round=0) {
 function event(world,e){world.events.push({...e,id:++world.serial,at:Math.round(world.t*10)/10});world.events=world.events.slice(-35);}
 function learn(p,link){if(!p.learned.includes(link))p.learned.push(link);}
 function catchPrey(world,p,q){
-  if(!canEat(p.role,q.role)||p.eatWait>0||q.protect>0||hideProtected(q)||q.respawn>0||p.respawn>0)return false;
+  if(!canConsume(world,p,q)||p.eatWait>0||q.protect>0||hideProtected(q)||q.respawn>0||p.respawn>0)return false;
   const link=p.role;learn(p,link);learn(q,link);p.score++;p.fed=(p.fed||0)+1;q.caught++;q.respawn=2.5;q.hidden=false;p.eatWait=1.2;
-  event(world,{type:'catch',from:q.role,to:p.role,hunter:p.id,prey:q.id,x:q.x,y:q.y});return true;
+  event(world,{type:'catch',from:q.role,to:p.role,hunter:p.id,prey:q.id,x:q.x,y:q.y,...(world.foodWeb?{food:q.kind,eater:p.kind}:{})});return true;
 }
 export function visibleTo(viewer,target){
   if(viewer?.id===target.id||!viewer)return true;
@@ -109,14 +113,14 @@ function walkClear(a,b){
 }
 function aiInput(world,p,dt){
   const all=Object.values(world.players).filter(q=>q.online&&q.respawn<=0&&q.id!==p.id);
-  const danger=all.filter(q=>canEat(q.role,p.role)&&visibleTo(p,q)).sort((a,b)=>dist(p,a)-dist(p,b))[0];
+  const danger=all.filter(q=>canConsume(world,q,p)&&visibleTo(p,q)).sort((a,b)=>dist(p,a)-dist(p,b))[0];
   let state=AI_STATES.get(p);if(!state){state={heading:p.angle,chooseAt:0,pathAt:0,route:[]};AI_STATES.set(p,state);}
   const valid=state.target&&(state.kind==='wander'?true:state.kind==='danger'?state.target.respawn<=0&&dist(p,state.target)<290:state.target.ready!==undefined?state.target.ready<=0:state.target.online&&state.target.respawn<=0&&state.target.protect<=0&&!hideProtected(state.target));
   if(world.t>=state.chooseAt||!valid||danger&&dist(p,danger)<140&&state.kind!=='danger'){
     state.chooseAt=world.t+.55;state.route=[];state.pathAt=0;
     if(danger&&dist(p,danger)<230){state.kind='danger';state.target=danger;}
     else{
-      const foods=p.role===0?world.plants.filter(q=>q.ready<=0):all.filter(q=>canEat(p.role,q.role)&&q.protect<=0&&!hideProtected(q)&&visibleTo(p,q));
+      const foods=world.foodWeb?[...world.plants.filter(q=>q.ready<=0&&canConsume(world,p,q)),...all.filter(q=>canConsume(world,p,q)&&q.protect<=0&&!hideProtected(q)&&visibleTo(p,q))]:p.role===0?world.plants.filter(q=>q.ready<=0):all.filter(q=>canEat(p.role,q.role)&&q.protect<=0&&!hideProtected(q)&&visibleTo(p,q));
       state.kind='food';state.target=foods.sort((a,b)=>dist(p,a)-dist(p,b))[0];
       if(!state.target){state.kind='wander';state.target={x:clamp(p.x+Math.cos(world.t*.18+p.base)*240,65,W-65),y:clamp(p.y+Math.sin(world.t*.18+p.base)*240,65,H-65)};}
     }
@@ -207,17 +211,17 @@ export function step(world,inputs={},dt=.05){
     const motion=advanceMotion(p,input,dt);
     if(motion.skillStarted)event(world,{type:'skill',hunter:p.id,role:p.role,...takeoff});
     advanceHiding(p,motion,dt);
-    if(p.role===0&&!motion.airborne&&p.eatWait===0){
-      const f=world.plants.find(q=>q.ready<=0&&dist(p,q)<47);
-      if(f){f.ready=7;p.score++;p.fed=(p.fed||0)+1;p.eatWait=.65;learn(p,0);event(world,{type:'rice',hunter:p.id,from:-1,to:0,x:f.x,y:f.y});}
+    if((world.foodWeb||p.role===0)&&!motion.airborne&&p.eatWait===0){
+      const f=world.plants.find(q=>q.ready<=0&&(!world.foodWeb||canConsume(world,p,q))&&dist(p,q)<47);
+      if(f){f.ready=7;p.score++;p.fed=(p.fed||0)+1;p.eatWait=.65;learn(p,0);event(world,{type:'rice',hunter:p.id,from:-1,to:p.role,x:f.x,y:f.y,...(world.foodWeb?{food:f.kind,eater:p.kind}:{})});}
     }
   }
   // One authoritative host resolves collisions once. A prey cannot be caught twice.
   for(const p of all){
-    if(p.role===0||p.respawn>0||p.eatWait>0)continue;
+    if(!world.foodWeb&&p.role===0||p.respawn>0||p.eatWait>0)continue;
     const reach=p.role===1&&p.effect>0?145:52;
     for(const q of all){
-      if(q.id===p.id||!canEat(p.role,q.role)||q.protect>0||hideProtected(q)||q.respawn>0||!visibleTo(p,q)||q.role===0&&q.effect>0)continue;
+      if(q.id===p.id||!canConsume(world,p,q)||q.protect>0||hideProtected(q)||q.respawn>0||!visibleTo(p,q)||q.role===0&&q.effect>0)continue;
       const d=dist(p,q),angle=Math.atan2(q.y-p.y,q.x-p.x),dot=Math.cos(angle-p.angle);
       if(d<reach&&(d<52||dot>.45)){if(catchPrey(world,p,q))break;}
     }

@@ -1,99 +1,75 @@
-export const HUNT_WIDTH=1100,HUNT_HEIGHT=680;
-export const HUNT_ROLES=['sparrow','mouse','snake','hawk'];
-const huntClamp=(n,min,max)=>Math.max(min,Math.min(max,n));
-const huntDistance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const huntTurn=(angle,target,max)=>angle+huntClamp(Math.atan2(Math.sin(target-angle),Math.cos(target-angle)),-max,max);
+import {W,H,createWorld,addPlayer,startRound,step,resolvePosition,dist,ROLES,findPath} from './engine.js';
+import {PictureQuiz} from './quiz.js';
+import {WEB_ORGANISMS,WEB_ANIMALS,WEB_EDGES,webFoods,webName,isWebEdge} from './web-ecosystem.js';
 
+export const HUNT_WIDTH=W,HUNT_HEIGHT=H;
+export const HUNT_ROLES=WEB_ANIMALS;
+const webGoals={grasshopper:5,frog:3,spider:3,mouse:4,sparrow:4,rabbit:5,snake:3,hawk:3};
 export class WebHunt{
-  constructor(diet,random=Math.random){
-    this.diet=diet.map(edge=>[...edge]);this.random=random;this.level=0;this.t=0;this.serial=0;this.events=[];this.records=[];this.actorSerial=0;this.lastAction=0;
-    this.loadLevel();
-  }
-  get role(){return HUNT_ROLES[this.level];}
-  get foods(){return this.diet.filter(([,eater])=>eater===this.role).map(([food])=>food);}
-  get remainingFoods(){return this.foods.filter(id=>!this.found.has(id));}
-  canEat(food,eater){return this.diet.some(([a,b])=>a===food&&b===eater);}
-  emit(type,extra={}){this.events.push({id:++this.serial,type,at:this.t,...extra});this.events=this.events.slice(-30);}
-  makeActor(kind,x,y){
-    return {uid:++this.actorSerial,kind,x,y,px:x,py:y,angle:this.random()*Math.PI*2,wander:this.random()*2,respawn:0,protect:0,vx:0,vy:0};
-  }
-  loadLevel(){
-    this.phase='playing';this.lastAction=0;this.found=new Set();this.me=this.makeActor(this.role,550,340);this.me.protect=4;
-    this.me.angle=0;this.cool=0;this.dash=0;this.actors=[];this.levelStarted=this.t;
-    const foods=this.foods;
-    foods.forEach((kind,index)=>{
-      const count=kind==='rice'?5:6;
+  constructor(kind,{duration=90,density=3,random=Math.random}={}){
+    if(!WEB_ANIMALS.includes(kind))throw new Error('체험할 동물을 골라 주세요.');
+    this.role=kind;this.random=random;this.found=new Set();this.foodCounts={};this.lastEvent=0;this.quiz=null;this.record=null;
+    const seconds=[60,90,120].includes(Number(duration))?Number(duration):90;
+    this.world=createWorld(seconds,0);this.world.foodWeb=true;this.world.diet=WEB_EDGES.map(edge=>[...edge]);
+    this.me=addPlayer(this.world,'me',{label:'나'});this.me.base=WEB_ORGANISMS[kind].role;this.me.kind=kind;
+    const scale=Math.max(1,Math.min(4,Number(density)||3))/3;
+    for(const id of WEB_ANIMALS){
+      const count=Math.max(1,Math.round((this.foods.includes(id)?6:2)*scale));
       for(let i=0;i<count;i++){
-        const near=i===0,angle=-1.1+index*1.1;
-        const x=near?550+Math.cos(angle)*(135+index*30):65+this.random()*(HUNT_WIDTH-130);
-        const y=near?340+Math.sin(angle)*(135+index*30):75+this.random()*(HUNT_HEIGHT-150);
-        this.actors.push(this.makeActor(kind,x,y));
+        const actor=addPlayer(this.world,`web_${id}_${i}`,{base:WEB_ORGANISMS[id].role+4*i,label:webName(id)},true);
+        actor.kind=id;actor.speedFactor=[.64,.72,.74,.76][actor.role];
       }
+    }
+    startRound(this.world,0);
+    for(const actor of this.actors){
+      const point=resolvePosition(70+random()*(W-140),80+random()*(H-160));actor.x=point.x;actor.y=point.y;
+      if(dist(actor,this.me)<170){const far=resolvePosition(Math.max(70,Math.min(W-70,this.me.x+400)),Math.max(80,Math.min(H-80,this.me.y+260)));actor.x=far.x;actor.y=far.y;}
+    }
+    for(const [index,id] of this.foods.filter(id=>WEB_ANIMALS.includes(id)).entries()){
+      this.actors.filter(actor=>actor.kind===id).slice(0,3).forEach((actor,j)=>{
+        const angle=index*1.3+j*2.1;
+        const x=Math.max(70,Math.min(W-70,this.me.x+Math.cos(angle)*(240+j*40)));
+        const y=Math.max(80,Math.min(H-80,this.me.y+Math.sin(angle)*(240+j*40)));
+        const point=resolvePosition(x,y);
+        actor.x=point.x;actor.y=point.y;
+      });
+    }
+    this.world.plants.forEach(plant=>plant.kind='rice');
+    const clover=Array.from({length:24},(_,i)=>{
+      const point=resolvePosition(260+(i%8)*190,250+Math.floor(i/8)*330);
+      return {id:24+i,kind:'clover',x:point.x,y:point.y,ready:0};
     });
-    const enemies=this.diet.filter(([food])=>food===this.role).map(([,eater])=>eater);
-    for(const [i,kind] of [...new Set(enemies)].entries())this.actors.push(this.makeActor(kind,i%2?1000:85,i%2?580:95));
+    this.world.plants.push(...clover);
   }
-  next(){
-    if(this.phase!=='roundEnd')return false;
-    if(this.level===HUNT_ROLES.length-1){this.phase='done';return true;}
-    this.level++;this.loadLevel();return true;
+  get phase(){return this.world.phase;}
+  get t(){return this.world.t;}
+  get serial(){return this.world.serial;}
+  get events(){return this.world.events;}
+  get actors(){return Object.values(this.world.players).filter(p=>p.bot);}
+  get foods(){return webFoods(this.role);}
+  get remainingFoods(){return this.foods.filter(id=>!this.found.has(id));}
+  get mission(){
+    const goal=Math.max(1,Math.ceil(webGoals[this.role]*this.world.duration/90)),types=Math.min(2,this.foods.length);
+    return {goal,count:this.me.fed,types,found:this.found.size,complete:this.me.fed>=goal&&this.found.size>=types};
   }
-  pause(){if(this.phase!=='playing')return false;this.phase='paused';return true;}
-  resume(){if(this.phase!=='paused')return false;this.phase='playing';return true;}
-  _move(actor,vx,vy,dt){
-    actor.x=huntClamp(actor.x+vx*dt,35,HUNT_WIDTH-35);actor.y=huntClamp(actor.y+vy*dt,42,HUNT_HEIGHT-42);
-  }
-  _respawn(actor){
-    // Keep new targets away from the learner and reset interpolation together.
-    let x,y;
-    for(let i=0;i<20;i++){x=60+this.random()*(HUNT_WIDTH-120);y=65+this.random()*(HUNT_HEIGHT-130);if(Math.hypot(x-this.me.x,y-this.me.y)>220)break;}
-    actor.x=actor.px=x;actor.y=actor.py=y;actor.respawn=0;actor.protect=1;
-  }
+  get skill(){return WEB_ORGANISMS[this.role].skill||ROLES[this.me.role].skill;}
+  canEat(food,eater){return isWebEdge(food,eater);}
   step(input={},dt=1/60){
     if(this.phase!=='playing'||!Number.isFinite(dt)||dt<=0)return;
-    dt=Math.min(dt,.05);this.t+=dt;const me=this.me;
-    for(const actor of [me,...this.actors]){actor.px=actor.x;actor.py=actor.y;actor.protect=Math.max(0,actor.protect-dt);}
-    this.cool=Math.max(0,this.cool-dt);this.dash=Math.max(0,this.dash-dt);
-    if(me.respawn>0){
-      me.respawn=Math.max(0,me.respawn-dt);
-      if(me.respawn===0){me.x=me.px=550;me.y=me.py=340;me.protect=3;me.vx=me.vy=0;this.emit('respawn');}
-    }else{
-      let x=Number.isFinite(input.x)?input.x:0,y=Number.isFinite(input.y)?input.y:0;
-      const length=Math.max(1,Math.hypot(x,y));x/=length;y/=length;
-      if(Number.isInteger(input.action)&&input.action>this.lastAction){
-        this.lastAction=input.action;
-        if(this.cool===0){this.dash=.45;this.cool=3.5;this.emit('dash');}
-      }
-      if(Math.hypot(x,y)>.05)me.angle=Math.atan2(y,x);
-      if(this.dash>0&&Math.hypot(x,y)<.05){x=Math.cos(me.angle);y=Math.sin(me.angle);}
-      const speed=this.dash>0?360:218,blend=1-Math.exp(-dt*17);
-      me.vx+=(x*speed-me.vx)*blend;me.vy+=(y*speed-me.vy)*blend;
-      this._move(me,me.vx,me.vy,dt);
-    }
-    for(const actor of this.actors){
-      if(actor.respawn>0){actor.respawn=Math.max(0,actor.respawn-dt);if(actor.respawn===0)this._respawn(actor);continue;}
-      if(actor.kind==='rice')continue;
-      actor.wander-=dt;const distance=huntDistance(actor,me),isFood=this.canEat(actor.kind,this.role),isEnemy=this.canEat(this.role,actor.kind);
-      if(isFood&&distance<165&&me.respawn<=0)actor.targetAngle=Math.atan2(actor.y-me.y,actor.x-me.x);
-      else if(isEnemy&&distance<200&&me.respawn<=0&&me.protect===0)actor.targetAngle=Math.atan2(me.y-actor.y,me.x-actor.x);
-      else if(actor.wander<=0||actor.targetAngle===undefined){actor.targetAngle=actor.angle+(this.random()-.5)*1.6;actor.wander=1.3+this.random()*1.7;}
-      if(actor.x<60)actor.targetAngle=0;if(actor.x>HUNT_WIDTH-60)actor.targetAngle=Math.PI;
-      if(actor.y<65)actor.targetAngle=Math.PI/2;if(actor.y>HUNT_HEIGHT-65)actor.targetAngle=-Math.PI/2;
-      actor.angle=huntTurn(actor.angle,actor.targetAngle,2.7*dt);
-      const speed=isEnemy?98:actor.kind==='sparrow'?116:actor.kind==='mouse'?110:98;
-      actor.vx=Math.cos(actor.angle)*speed;actor.vy=Math.sin(actor.angle)*speed;this._move(actor,actor.vx,actor.vy,dt);
-    }
-    if(me.respawn>0)return;
-    for(const actor of this.actors){
-      if(actor.respawn>0||huntDistance(me,actor)>35)continue;
-      if(this.canEat(actor.kind,this.role)){
-        actor.respawn=2.3;this.found.add(actor.kind);this.emit('eat',{food:actor.kind,eater:this.role});
-        if(this.remainingFoods.length===0){
-          this.phase='roundEnd';this.records.push({role:this.role,foods:[...this.found],elapsed:this.t-this.levelStarted});this.emit('roundDone');break;
-        }
-      }else if(me.protect===0&&actor.protect===0&&this.canEat(this.role,actor.kind)){
-        me.respawn=2;me.vx=me.vy=0;this.dash=0;this.emit('caught',{food:this.role,eater:actor.kind});break;
-      }
-    }
+    step(this.world,{me:input},Math.min(dt,.12));
+    for(const event of this.events)if(event.id>this.lastEvent&&event.hunter==='me'&&event.food){this.found.add(event.food);this.foodCounts[event.food]=(this.foodCounts[event.food]||0)+1;}
+    this.lastEvent=this.serial;if(this.phase==='between')this.finish();
   }
+  finish(){
+    if(this.record)return false;
+    this.world.phase='between';
+    const foods=this.foods,answer=[...this.found][0]||foods[0],falseChoices=Object.keys(WEB_ORGANISMS).filter(id=>id!==this.role&&!foods.includes(id));
+    const choices=[falseChoices[0],answer,falseChoices.at(-1)];
+    const name=webName(this.role),subject=(name.charCodeAt(name.length-1)-44032)%28===0?'는':'은',food=webName(answer),last=food.charCodeAt(food.length-1),object=(last-44032)%28===0?'를':'을';
+    this.quiz=new PictureQuiz(this.me.role,{mode:'food',subject:this.role,choices,answer,question:`이 놀이에서 ${name}의 먹이를 그림에서 골라요.`,explanation:`${name}${subject} ${food}${object} 먹어요.`});
+    this.record={kind:this.role,count:this.me.fed,caught:this.me.caught,foods:[...this.found],foodCounts:{...this.foodCounts},elapsed:this.t,duration:this.world.duration,mission:{...this.mission}};
+    return true;
+  }
+  pause(){if(this.phase!=='playing')return false;this.world.phase='paused';return true;}
+  resume(){if(this.phase!=='paused')return false;this.world.phase='playing';return true;}
 }

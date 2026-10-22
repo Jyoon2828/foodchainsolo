@@ -11,10 +11,10 @@ export const QUIZZES=[
 export function quizForRole(role){return QUIZZES[role]||QUIZZES[0];}
 export function isCorrect(role,choice){return typeof choice==='string'&&choice===quizForRole(role).answer;}
 export class PictureQuiz{
-  constructor(role){this.role=role;this.quiz=quizForRole(role);this.choice=null;this.solved=false;this.message='아래 그림을 눌러 빈자리를 채워 보세요.';}
+  constructor(role,quiz=quizForRole(role)){this.role=role;this.quiz=quiz;this.choice=null;this.solved=false;this.message='아래 그림을 눌러 빈자리를 채워 보세요.';}
   choose(id){
     if(this.solved||!this.quiz.choices.includes(id))return false;
-    this.choice=id;this.solved=isCorrect(this.role,id);
+    this.choice=id;this.solved=typeof id==='string'&&id===this.quiz.answer;
     this.message=this.solved?'맞았어요! '+this.quiz.explanation:'다시 살펴볼까요? 실제로 먹고 먹혔던 모습을 떠올려 보세요.';
     return this.solved;
   }

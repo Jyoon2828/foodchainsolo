@@ -1,64 +1,75 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {WebHunt,HUNT_WIDTH,HUNT_HEIGHT,HUNT_ROLES} from '../source/web-hunt.js';
-import {FoodWebActivity,WEB_EDGES} from '../source/food-web.js';
+import {WebHunt} from '../source/web-hunt.js';
+import {WEB_ANIMALS,WEB_ORGANISMS,WEB_EDGES,isWebEdge,webFoods} from '../source/web-ecosystem.js';
+import {W,H,OBSTACLES,REEDS,advanceMotion,dist,findPath,hideProtected} from '../source/engine.js';
 function seeded(){let seed=25;return ()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);}
-function eat(hunt,kind){const target=hunt.actors.find(p=>p.kind===kind&&p.respawn===0);target.x=hunt.me.x;target.y=hunt.me.y;hunt.step({},1/60);}
-test('missions supply several reachable examples of every required food',()=>{
-  const h=new WebHunt(WEB_EDGES,seeded());
-  for(const role of HUNT_ROLES){
-    assert.equal(h.role,role);
-    for(const food of h.foods){
-      const prey=h.actors.filter(p=>p.kind===food);assert.ok(prey.length>=5);
-      assert.ok(prey.some(p=>Math.hypot(p.x-h.me.x,p.y-h.me.y)<220));
-    }
-    for(const food of h.foods)eat(h,food);assert.equal(h.phase,'roundEnd');h.next();
+function scene(id){return new WebHunt(id,{random:seeded()});}
+function offer(h,kind){
+  const food=h.world.plants.find(p=>p.kind===kind)||h.actors.find(p=>p.kind===kind);
+  Object.assign(h.me,{x:700,y:450,effect:0,eatWait:0,protect:100});
+  for(const other of h.actors)if(other!==food)Object.assign(other,{x:1600,y:1000});
+  Object.assign(food,{x:700,y:450,ready:0,protect:0,respawn:0,effect:0,hidden:false,bot:false});
+  h.step({},1/60);return food;
+}
+test('all eight animals are selectable while the two producers are not player roles',()=>{
+  for(const id of WEB_ANIMALS){const h=scene(id);assert.equal(h.me.kind,id);assert.equal(h.me.role,WEB_ORGANISMS[id].role);assert.deepEqual(h.foods,webFoods(id));assert.equal(h.world.duration,90);}
+  for(const id of ['rice','clover','unknown'])assert.throws(()=>scene(id));
+});
+test('the food web uses the exact original forest dimensions, obstacles, paths and movement',()=>{
+  const h=scene('rabbit');assert.equal(W,1800);assert.equal(H,1100);assert.equal(OBSTACLES.length,10);assert.equal(REEDS.length,4);
+  h.world.players={me:h.me};h.world.plants=[];Object.assign(h.me,{x:700,y:450,angle:0});
+  const expected={...h.me};advanceMotion(expected,{x:1},1/60);h.step({x:1},1/60);assert.equal(h.me.x,expected.x);assert.equal(h.me.y,expected.y);
+  Object.assign(h.me,{x:600,y:190,effect:0,cool:0,angle:Math.PI/2});
+  for(let i=0;i<45;i++)h.step({y:1,action:1},1/60);assert.ok(h.me.y>400,'rabbit should jump across the same tree');
+});
+test('every food has several examples and nearby starting targets',()=>{
+  for(const id of WEB_ANIMALS){const h=scene(id);
+    assert.equal(h.world.plants.filter(p=>p.kind==='rice').length,24);assert.equal(h.world.plants.filter(p=>p.kind==='clover').length,24);
+    for(const kind of h.foods){const food=[...h.actors,...h.world.plants].filter(p=>p.kind===kind);assert.ok(food.length>=6);assert.ok(food.some(p=>dist(p,h.me)<450),id+' lacks reachable '+kind);}
   }
-  assert.equal(h.phase,'done');assert.equal(h.records.length,4);
 });
-test('normal controls move the learner and normalize diagonal movement',()=>{
-  const a=new WebHunt(WEB_EDGES,seeded()),b=new WebHunt(WEB_EDGES,seeded());a.actors=[];b.actors=[];
-  for(let i=0;i<60;i++){a.step({x:1},1/60);b.step({x:1,y:1},1/60);}
-  assert.ok(a.me.x>700);assert.ok(Math.abs(Math.hypot(a.me.x-550,a.me.y-340)-Math.hypot(b.me.x-550,b.me.y-340))<.01);
-  assert.ok(a.me.px<a.me.x);assert.equal(a.found.size,0);
+test('one diet table controls eating including prey with non-adjacent legacy motion roles',()=>{
+  for(const id of WEB_ANIMALS)for(const food of webFoods(id)){const h=scene(id);offer(h,food);assert.equal(h.me.fed,1,id+' should eat '+food);assert.equal(h.found.has(food),true);assert.ok(h.events.some(e=>e.food===food&&e.eater===id));}
+  for(const [id,food] of [['rabbit','rice'],['mouse','frog'],['spider','frog'],['hawk','spider']]){const h=scene(id);offer(h,food);assert.equal(h.me.fed,0,id+' must not eat '+food);}
 });
-test('contact with a food records an eating encounter and repeated kinds count once',()=>{
-  const h=new WebHunt(WEB_EDGES,seeded());eat(h,'rice');assert.equal(h.found.size,1);
-  const event=h.events.find(e=>e.type==='eat');assert.equal(event.food,'rice');assert.equal(event.eater,'sparrow');
-  eat(h,'rice');assert.equal(h.found.size,1);assert.equal(h.phase,'playing');eat(h,'grasshopper');assert.equal(h.phase,'roundEnd');
+test('being caught keeps mission food and grants the original protected respawn',()=>{
+  const h=scene('rabbit');offer(h,'clover');const enemy=h.actors.find(p=>p.kind==='hawk');
+  h.me.protect=0;Object.assign(enemy,{x:h.me.x,y:h.me.y,protect:0,eatWait:0,effect:0});h.step({},1/60);assert.equal(h.me.caught,1);assert.ok(h.me.respawn>2.4);assert.equal(h.me.fed,1);
+  h.world.players={me:h.me};for(let i=0;i<160;i++)h.step({},1/60);assert.equal(h.me.respawn,0);assert.ok(h.me.protect>2.5);assert.equal(h.found.has('clover'),true);
 });
-test('being caught keeps found foods and gives a protected restart',()=>{
-  const h=new WebHunt(WEB_EDGES,seeded());eat(h,'rice');h.me.protect=0;
-  const enemy=h.actors.find(a=>h.canEat(h.role,a.kind));enemy.x=h.me.x;enemy.y=h.me.y;
-  h.step({},1/60);assert.ok(h.me.respawn>0);assert.equal(h.found.has('rice'),true);assert.ok(h.events.some(e=>e.type==='caught'));
-  for(let i=0;i<125;i++)h.step({},1/60);assert.equal(h.me.respawn,0);assert.ok(h.me.protect>2);assert.equal(h.found.has('rice'),true);
-});
-test('pause freezes the timer, movement, respawn and cooldown until explicit resume',()=>{
-  const h=new WebHunt(WEB_EDGES,seeded());h.step({x:1,action:1},1/60);h.pause();const before=JSON.stringify(h);
-  for(let i=0;i<60;i++)h.step({x:1},1/60);assert.equal(JSON.stringify(h),before);h.resume();h.step({x:1},1/60);assert.ok(h.cool<3.5);
-});
-test('the movement skill has a cooldown and actors stay in bounds',()=>{
-  const h=new WebHunt(WEB_EDGES,seeded());h.actors=[];
-  h.step({x:1,action:1},1/60);assert.ok(h.dash>0);const first=h.events.filter(e=>e.type==='dash').length;
-  h.step({x:1,action:2},1/60);assert.equal(h.events.filter(e=>e.type==='dash').length,first);
-  for(let i=0;i<400;i++)h.step({x:1,y:1},1/60);
-  assert.ok(h.me.x<=HUNT_WIDTH-35);assert.ok(h.me.y<=HUNT_HEIGHT-42);assert.equal(h.cool,0);
-  h.step({x:-1,action:3},1/60);assert.equal(h.events.filter(e=>e.type==='dash').length,2);
-});
-test('ordinary pursuit completes every food mission within 90 simulated seconds per role',()=>{
-  const a=new FoodWebActivity();a.begin();a.hunt.random=seeded();
-  for(let role=0;role<4;role++){
-    const start=a.hunt.t;
-    while(a.hunt.phase==='playing'&&a.hunt.t-start<90){
-      const h=a.hunt,prey=h.actors.filter(p=>h.remainingFoods.includes(p.kind)&&p.respawn===0).sort((p,q)=>Math.hypot(p.x-h.me.x,p.y-h.me.y)-Math.hypot(q.x-h.me.x,q.y-h.me.y))[0];
-      const dx=prey?prey.x-h.me.x:0,dy=prey?prey.y-h.me.y:0,d=Math.max(1,Math.hypot(dx,dy));a.tick({x:dx/d,y:dy/d},1/60);
-    }
-    assert.equal(a.hunt.phase,'roundEnd',`role ${role} took too long`);a.advanceHunt();
+test('new ground animals receive the same three-second cover and it expires in place',()=>{
+  for(const kind of ['mouse','spider','rabbit']){const h=scene(kind);h.world.players={me:h.me};h.world.plants=[];Object.assign(h.me,{x:320,y:250,protect:0});
+    h.step({},.05);assert.equal(hideProtected(h.me),true);for(let i=0;i<62;i++)h.step({},.05);assert.equal(hideProtected(h.me),false);assert.equal(h.me.hidden,true);
   }
-  assert.equal(a.stage,'observe');assert.equal(a.edges.length,10);
 });
-test('instances and new levels keep separate progress and invalid time does not poison positions',()=>{
-  const a=new WebHunt(WEB_EDGES,seeded()),b=new WebHunt(WEB_EDGES,seeded());eat(a,'rice');assert.equal(b.found.size,0);
-  const t=b.t;for(const dt of [NaN,-1,0,Infinity])b.step({x:1},dt);assert.equal(b.t,t);assert.ok(Number.isFinite(b.me.x));
-  for(const food of a.remainingFoods)eat(a,food);a.next();assert.equal(a.found.size,0);assert.equal(a.records.length,1);assert.equal(a.lastAction,0);
+test('pause freezes movement, mission time, protection, food regrowth and cooldown',()=>{
+  const h=scene('sparrow');h.step({x:1,action:1},1/60);h.pause();const before=JSON.stringify(h.world);
+  for(let i=0;i<60;i++)h.step({x:1},1/60);assert.equal(JSON.stringify(h.world),before);h.resume();h.step({x:1},1/60);assert.ok(h.me.cool<5);
+});
+test('the timer ends in a picture quiz with exactly one valid food choice for every animal',()=>{
+  for(const kind of WEB_ANIMALS){const h=scene(kind);h.world.remaining=.01;h.step({},1/60);assert.equal(h.phase,'between');assert.ok(h.record);const q=h.quiz.quiz;
+    assert.equal(q.choices.filter(id=>isWebEdge(id,kind)).length,1);assert.equal(q.subject,kind);assert.equal(h.quiz.choose(q.answer),true);assert.equal(h.finish(),false);
+  }
+});
+test('missions count total foods and two different kinds when more than one exists',()=>{
+  const h=scene('frog');for(let i=0;i<3;i++)offer(h,'grasshopper');assert.equal(h.mission.complete,false);assert.equal(h.mission.found,1);offer(h,'spider');assert.equal(h.mission.complete,true);
+  const rabbit=scene('rabbit');for(let i=0;i<5;i++)offer(rabbit,'clover');assert.equal(rabbit.mission.types,1);assert.equal(rabbit.mission.complete,true);
+});
+test('new sessions keep independent progress and reject invalid time steps',()=>{
+  const a=scene('mouse'),b=scene('mouse');offer(a,'rice');assert.equal(b.me.fed,0);const before=JSON.stringify(b.world);for(const dt of [NaN,0,-1,Infinity])b.step({x:1},dt);assert.equal(JSON.stringify(b.world),before);
+});
+test('ordinary movement with pathfinding can finish each selected animal mission within 90 seconds',()=>{
+  for(const kind of WEB_ANIMALS){const h=scene(kind);let route=[],target=null,refresh=0;
+    for(let tick=0;tick<5400&&h.phase==='playing'&&!h.mission.complete;tick++){
+      if(tick>=refresh||!target||target.respawn>0||target.ready>0){
+        const missing=h.found.size<h.mission.types?h.remainingFoods:h.foods;
+        const candidates=[...h.world.plants,...h.actors].filter(p=>missing.includes(p.kind)&&!(p.ready>0)&&!(p.respawn>0)&&!(p.protect>0)&&!hideProtected(p));
+        target=candidates.sort((a,b)=>dist(a,h.me)-dist(b,h.me))[0];route=target?findPath(h.me,target,h.me.role):[];refresh=tick+30;
+      }
+      while(route.length&&dist(h.me,route[0])<20)route.shift();const goal=route[0]||target;
+      const dx=goal?goal.x-h.me.x:0,dy=goal?goal.y-h.me.y:0,d=Math.max(1,Math.hypot(dx,dy));h.step({x:dx/d,y:dy/d},1/60);
+    }
+    assert.equal(h.mission.complete,true,kind+' mission was not reachable');
+  }
 });

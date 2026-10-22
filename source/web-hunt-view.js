@@ -1,119 +1,100 @@
-import {HUNT_WIDTH,HUNT_HEIGHT} from './web-hunt.js';
-import {webName} from './food-web.js';
-import {drawWebPicture,webMealCard} from './web-art.js';
-import {drawForestProp} from './render.js';
+import {Renderer} from './render.js';
+import {LearnerSound} from './audio.js';
+import {SIMULATION_STEP} from './motion-view.js';
+import {findPath,dist,hideProtected,HIDE_DURATION} from './engine.js';
+import {webName,WEB_EDGES,WEB_ANIMALS} from './web-ecosystem.js';
+import {webPicture,webMealCard,webRendererArtwork} from './web-art.js';
+import {pictureQuizMarkup} from './quiz-view.js';
 
 export class WebHuntGame{
   constructor(canvas,activity,{audio,onAdvance,onUpdate}={}){
-    this.canvas=canvas;this.c=canvas.getContext('2d');this.activity=activity;this.audio=audio;
-    this.onAdvance=onAdvance;this.onUpdate=onUpdate;this.keys=new Set();this.joy={x:0,y:0};
-    this.target=null;this.action=0;this.accumulator=0;this.lastSound=activity.hunt.serial;this.lastHUD=0;this.lastPhase=activity.hunt.phase;
-    this.camera={x:0,y:0};this.facing=new Map();this.bookResume=false;
-    const get=id=>document.getElementById(id);this.get=get;
-    this.observer=new ResizeObserver(()=>this.fit());this.observer.observe(canvas);this.fit();
+    this.canvas=canvas;this.activity=activity;this.audio=audio;this.onAdvance=onAdvance;this.onUpdate=onUpdate;
+    this.fullMap=false;this.keys=new Set();this.joy={x:0,y:0};this.target=null;this.route=[];this.action=0;this.accumulator=0;this.lastHUD=0;
+    this.lastPhase=activity.hunt.phase;this.lastSound=activity.hunt.serial;this.bookResume=false;this.get=id=>document.getElementById(id);
+    const h=activity.hunt,g=this.get;
+    this.renderer=new Renderer(canvas,(x,y)=>{if(h.phase!=='playing')return;this.route=findPath(h.me,{x,y},h.me.role);this.target=this.route.shift()||null;},webRendererArtwork);
+    this.sound=new LearnerSound(audio);this.sound.lastEvent=h.serial;
     this.onKey=e=>{
-      if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||get('helpDialog').open||get('soundDialog').open||!get('huntNotebook').hidden)return;
+      if(h.phase!=='playing'||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||g('helpDialog').open||g('soundDialog').open||!g('huntNotebook').hidden)return;
       const key=e.key.startsWith('Arrow')?e.key:e.key.toLowerCase();
-      if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(key)){
-        if(key===' '&&document.activeElement?.tagName==='BUTTON')return;
-        e.preventDefault();if(key===' '&&!e.repeat)this.action++;else this.keys.add(key);
-      }else if(['w','a','s','d'].includes(key))this.keys.add(key);
+      if(key===' '&&document.activeElement?.tagName==='BUTTON')return;
+      if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(key))e.preventDefault();
+      if(key===' '&&!e.repeat)this.skill();else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(key))this.keys.add(key);
     };
     this.onKeyUp=e=>this.keys.delete(e.key.startsWith('Arrow')?e.key:e.key.toLowerCase());
     document.addEventListener('keydown',this.onKey);document.addEventListener('keyup',this.onKeyUp);
-    canvas.onpointerdown=e=>{
-      if(activity.hunt.phase!=='playing')return;e.preventDefault();const r=canvas.getBoundingClientRect();
-      this.target={x:this.camera.x+(e.clientX-r.left)/this.scale,y:this.camera.y+(e.clientY-r.top)/this.scale};
-    };
-    const joystick=get('huntJoystick');
+    const joystick=g('huntJoystick');
     const move=e=>{
       const r=joystick.getBoundingClientRect(),max=r.width*.3,dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,len=Math.max(max,Math.hypot(dx,dy));
-      this.joy.x=dx/len;this.joy.y=dy/len;this.target=null;get('huntStick').style.transform=`translate(${this.joy.x*max}px,${this.joy.y*max}px)`;
+      this.joy.x=dx/len;this.joy.y=dy/len;this.target=null;this.route=[];g('huntStick').style.transform=`translate(${this.joy.x*max}px,${this.joy.y*max}px)`;
     };
-    joystick.onpointerdown=e=>{if(activity.hunt.phase!=='playing')return;e.preventDefault();this.pointer=e.pointerId;joystick.setPointerCapture(this.pointer);move(e);};
+    joystick.onpointerdown=e=>{if(h.phase!=='playing')return;e.preventDefault();this.pointer=e.pointerId;joystick.setPointerCapture(this.pointer);move(e);};
     joystick.onpointermove=e=>{if(e.pointerId===this.pointer)move(e);};
     joystick.onpointerup=joystick.onpointercancel=joystick.onlostpointercapture=()=>this.clearInput();
-    get('huntDash').onpointerdown=e=>{e.preventDefault();this.action++;};
-    get('huntDash').onclick=e=>{if(e.detail===0)this.action++;};
-    get('huntPause').onclick=()=>{if(!activity.pause()){audio?.unlock();activity.resume();}this.clearInput();this.onUpdate?.();};
-    get('huntResume').onclick=()=>{audio?.unlock();activity.resume();this.clearInput();this.onUpdate?.();};
-    get('huntAdvance').onclick=()=>{audio?.unlock();if(activity.advanceHunt())this.onAdvance?.();};
-    get('huntBook').onclick=()=>{
-      this.bookResume=activity.pause();this.clearInput();get('huntNotebookMeals').innerHTML=activity.edges.map(([food,eater])=>webMealCard(eater,food)).join('');get('huntNotebook').hidden=false;this.onUpdate?.();
+    g('huntAction').onpointerdown=e=>{e.preventDefault();this.skill();};g('huntAction').onclick=e=>{if(e.detail===0)this.skill();};
+    g('huntResume').onclick=()=>{audio.unlock();activity.resume();this.clearInput();onUpdate?.();};
+    g('huntEnd').onclick=()=>{if(!g('huntNotebook').hidden)return;this.clearInput();activity.endTrial();onUpdate?.();};
+    g('huntBook').onclick=()=>{
+      if(!g('huntNotebook').hidden)return;
+      this.bookResume=activity.pause();this.clearInput();
+      const meals=WEB_EDGES.filter(([food,eater])=>activity.encountered.has(food+'>'+eater));
+      g('huntNotebookMeals').innerHTML=meals.length?meals.map(([food,eater])=>webMealCard(eater,food)).join(''):'<p>먹이를 먹거나 잡히면 그 관계가 그림으로 쌓여요.</p>';
+      g('huntNotebook').hidden=false;onUpdate?.();
     };
-    get('closeHuntBook').onclick=()=>{get('huntNotebook').hidden=true;if(this.bookResume)activity.resume();this.bookResume=false;this.onUpdate?.();};
+    g('closeHuntBook').onclick=()=>{g('huntNotebook').hidden=true;if(this.bookResume)activity.resume();this.bookResume=false;onUpdate?.();};
+    this.updateHUD();
   }
-  clearInput(){this.keys.clear();this.joy.x=this.joy.y=0;this.pointer=null;this.target=null;if(this.get('huntStick'))this.get('huntStick').style.transform='';}
+  togglePause(){if(!this.get('huntNotebook').hidden)return;if(!this.activity.pause()){this.audio.unlock();this.activity.resume();}this.clearInput();this.onUpdate?.();}
+  skill(){const h=this.activity.hunt;if(h.phase!=='playing')return;if(h.me.role===0){this.target=null;this.route=[];}this.action++;navigator.vibrate?.(15);}
+  clearInput(){this.keys.clear();this.joy.x=this.joy.y=0;this.pointer=null;this.target=null;this.route=[];if(this.get('huntStick'))this.get('huntStick').style.transform='';}
   backgroundPause(){this.activity.pause();this.bookResume=false;this.clearInput();}
-  dispose(){
-    this.observer.disconnect();document.removeEventListener('keydown',this.onKey);document.removeEventListener('keyup',this.onKeyUp);this.clearInput();this.canvas.onpointerdown=null;
-  }
-  fit(){
-    const r=this.canvas.getBoundingClientRect();this.width=Math.max(1,r.width);this.height=Math.max(1,r.height);this.dpr=Math.min(globalThis.devicePixelRatio||1,1.6);
-    this.canvas.width=Math.round(this.width*this.dpr);this.canvas.height=Math.round(this.height*this.dpr);this.scale=Math.max(this.width/HUNT_WIDTH,this.height/HUNT_HEIGHT);
-    this.c.imageSmoothingEnabled=false;
-    const me=this.activity.hunt.me;this.camera.x=Math.max(0,Math.min(HUNT_WIDTH-this.width/this.scale,me.x-this.width/this.scale/2));this.camera.y=Math.max(0,Math.min(HUNT_HEIGHT-this.height/this.scale,me.y-this.height/this.scale/2));
-  }
+  dispose(){this.renderer.resize.disconnect();document.removeEventListener('keydown',this.onKey);document.removeEventListener('keyup',this.onKeyUp);this.clearInput();this.canvas.onpointerdown=null;}
   input(){
     let x=this.joy.x+(this.keys.has('ArrowRight')||this.keys.has('d')?1:0)-(this.keys.has('ArrowLeft')||this.keys.has('a')?1:0);
     let y=this.joy.y+(this.keys.has('ArrowDown')||this.keys.has('s')?1:0)-(this.keys.has('ArrowUp')||this.keys.has('w')?1:0);
-    if(Math.hypot(x,y)>.05)this.target=null;
-    else if(this.target){const me=this.activity.hunt.me,dx=this.target.x-me.x,dy=this.target.y-me.y,d=Math.hypot(dx,dy);if(d>11){x=dx/d;y=dy/d;}else this.target=null;}
+    if(Math.hypot(x,y)>.05){this.target=null;this.route=[];}
+    else if(this.target){const d=dist(this.activity.hunt.me,this.target);if(d>16){x=(this.target.x-this.activity.hunt.me.x)/d;y=(this.target.y-this.activity.hunt.me.y)/d;}else this.target=this.route.shift()||null;}
     const d=Math.max(1,Math.hypot(x,y));return {x:x/d,y:y/d,action:this.action};
   }
   frame(elapsed,now){
-    const hunt=this.activity.hunt;
-    if(hunt.phase==='playing'){
+    const h=this.activity.hunt;
+    if(h.phase==='playing'){
       this.accumulator+=Math.min(.1,elapsed);
-      while(this.accumulator>=1/60&&hunt.phase==='playing'){this.activity.tick(this.input(),1/60);this.accumulator-=1/60;}
+      while(this.accumulator>=SIMULATION_STEP&&h.phase==='playing'){this.renderer.motion.capture(h.world);this.activity.tick(this.input(),SIMULATION_STEP);this.accumulator-=SIMULATION_STEP;}
     }else this.accumulator=0;
-    if(hunt.phase!==this.lastPhase){this.lastPhase=hunt.phase;this.onUpdate?.();}
-    for(const event of hunt.events)if(event.id>this.lastSound){
-      if(event.type==='eat')this.audio?.effect('eat');if(event.type==='caught')this.audio?.effect('caught');if(event.type==='dash')this.audio?.effect('dive');if(event.type==='roundDone')this.audio?.effect('mission');
-      if(event.type==='eat'||event.type==='caught')this.meal=event;
-    }
-    this.lastSound=hunt.serial;this.draw(hunt.phase==='playing'?this.accumulator*60:1,elapsed);
+    if(h.phase!==this.lastPhase){this.lastPhase=h.phase;this.clearInput();this.onUpdate?.();}
+    this.sound.observe(h.world,h.mission);
+    for(const event of h.events)if(event.id>this.lastSound&&event.food&&(event.hunter==='me'||event.prey==='me'))this.meal=event;
+    this.lastSound=h.serial;
+    this.renderer.draw(h.world,'me',this.fullMap,{alpha:h.phase==='playing'?this.accumulator/SIMULATION_STEP:1});
     if(now-this.lastHUD>80){this.lastHUD=now;this.updateHUD();}
   }
-  updateHUD(){
-    const h=this.activity.hunt,g=this.get;
-    for(const id of h.foods){g('huntGoal-'+id).classList.toggle('found',h.found.has(id));g('huntFound-'+id).textContent=h.found.has(id)?'✓ 먹었어요':'찾아 먹기';}
-    g('huntLearned').textContent=`발견한 관계 ${this.activity.edges.length} / 10`;
-    g('huntCooldown').textContent=h.cool>0?`${h.cool.toFixed(1)}초 뒤`:'준비 완료';
-    g('huntRespawn').hidden=h.me.respawn<=0;if(h.me.respawn>0)g('huntRespawn').textContent=`다시 출발해요! ${h.me.respawn.toFixed(1)}초 뒤`;
-    g('huntPaused').hidden=h.phase!=='paused'||!g('huntNotebook').hidden||g('helpDialog').open||g('soundDialog').open;
-    g('huntPause').textContent=h.phase==='paused'?'계속하기':'잠깐 멈춤';
-    g('huntRoundDone').hidden=h.phase!=='roundEnd';
-    if(h.phase==='roundEnd'&&!this.resultPainted){g('huntRoundMeals').innerHTML=h.foods.map(food=>webMealCard(h.role,food)).join('');this.resultPainted=true;}
-    if(this.meal&&h.t-this.meal.at<1.8){
-      if(this.shownMeal!==this.meal.id){g('huntMealToast').innerHTML=webMealCard(this.meal.eater,this.meal.food);this.shownMeal=this.meal.id;}g('huntMealToast').hidden=false;
-    }else g('huntMealToast').hidden=true;
+  paintResult(){
+    const h=this.activity.hunt,root=this.get('huntRoundContent'),m=h.mission,p=h.quiz;
+    root.innerHTML=`<span class="eyebrow">${webName(h.role)} 체험 정리</span><h3>누가 무엇을 먹었나요?</h3><div class="mission-result ${m.complete?'complete':''}"><b>${m.complete?'✓ 먹이 미션 성공!':'이번 체험의 먹이 기록'}</b><span>먹이 먹기 ${m.count}번 / 목표 ${m.goal}번 · ${m.found}종류 / 목표 ${m.types}종류</span></div><div class="web-round-quiz"><h4>${p.quiz.question}</h4>${pictureQuizMarkup(p,{pictureFor:webPicture,nameFor:webName,idPrefix:'web-'})}</div><div class="web-round-actions"><button id="webChooseAgain" class="secondary wide" ${p.solved?'':'disabled'}>다른 동물 고르기</button><button id="webReview" class="primary wide" ${p.solved?'':'disabled'}>나의 먹이그물 살펴보기</button></div>`;
+    for(const button of root.querySelectorAll('[data-picture-choice]'))button.onclick=()=>{
+      if(p.solved)return;this.audio.unlock();const correct=this.activity.answerQuiz(button.dataset.pictureChoice);this.audio.effect(correct?'correct':'retry');this.paintResult();
+      if(correct)this.get('webChooseAgain').focus();else this.get('web-pictureChoice-'+button.dataset.pictureChoice)?.focus();
+    };
+    this.get('webChooseAgain').onclick=()=>{if(this.activity.chooseAgain())this.onAdvance?.();};
+    this.get('webReview').onclick=()=>{if(this.activity.review())this.onAdvance?.();};
   }
-  draw(alpha,elapsed){
-    const h=this.activity.hunt,c=this.c,me=h.me,lerp=a=>({x:a.px+(a.x-a.px)*alpha,y:a.py+(a.y-a.py)*alpha});
-    const p=lerp(me),vw=this.width/this.scale,vh=this.height/this.scale,blend=1-Math.exp(-Math.min(elapsed,.1)*10);
-    this.camera.x+=(Math.max(0,Math.min(HUNT_WIDTH-vw,p.x-vw/2))-this.camera.x)*blend;
-    this.camera.y+=(Math.max(0,Math.min(HUNT_HEIGHT-vh,p.y-vh/2))-this.camera.y)*blend;
-    const pixel=this.scale*this.dpr,camX=Math.round(this.camera.x*pixel)/pixel,camY=Math.round(this.camera.y*pixel)/pixel;
-    c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle='#b4d58e';c.fillRect(0,0,this.width,this.height);
-    c.save();c.scale(this.scale,this.scale);c.translate(-camX,-camY);
-    c.fillStyle='#a6ca7b';for(let x=20;x<HUNT_WIDTH;x+=48)for(let y=25;y<HUNT_HEIGHT;y+=46){c.fillRect(x,y,3,6);c.fillRect(x+4,y+2,3,4);}
-    for(let x=35;x<HUNT_WIDTH;x+=105){drawForestProp(c,0,x,7,105);drawForestProp(c,0,x,HUNT_HEIGHT-6,105);}
-    for(let y=115;y<HUNT_HEIGHT-70;y+=110){drawForestProp(c,0,0,y,105);drawForestProp(c,0,HUNT_WIDTH,y,105);}
-    for(const actor of [...h.actors,me].filter(a=>a.respawn<=0).sort((a,b)=>a.y-b.y)){
-      const pos=lerp(actor),x=Math.round(pos.x*pixel)/pixel,y=Math.round(pos.y*pixel)/pixel,isMe=actor===me,food=h.canEat(actor.kind,h.role),enemy=h.canEat(h.role,actor.kind);
-      c.fillStyle='#527a3a30';c.beginPath();c.ellipse(x,y+17,actor.kind==='rice'?18:23,7,0,0,7);c.fill();
-      if(isMe||food||enemy){c.strokeStyle=isMe?'#fffef2':food?'#ffe59b':'#c9957a';c.lineWidth=isMe?3:2;c.beginPath();c.ellipse(x,y+15,isMe?29:26,10,0,0,7);c.stroke();}
-      if(isMe&&me.protect>0){c.strokeStyle='#fff0a1';c.lineWidth=2;c.setLineDash([5,5]);c.beginPath();c.ellipse(x,y-3,34,39,0,0,7);c.stroke();c.setLineDash([]);}
-      const vx=actor.vx||0;let facing=this.facing.get(actor.uid)||1;if(Math.abs(vx)>20)facing=vx<0?-1:1;this.facing.set(actor.uid,facing);
-      const moving=Math.min(1,Math.hypot(actor.vx||0,actor.vy||0)/130),bob=actor.kind==='snake'?0:Math.sin(h.t*5+actor.uid)*.7*moving;
-      c.save();c.translate(x,y-8-bob);if((actor.kind==='sparrow'&&facing>0)||(actor.kind==='mouse'&&facing<0))c.scale(-1,1);
-      drawWebPicture(c,actor.kind,0,0,isMe?64:actor.kind==='rice'?44:55);c.restore();
-      c.textAlign='center';c.font=`${isMe?'bold ':''}12px system-ui, sans-serif`;c.fillStyle=isMe?'#2d6242':'#46643a';c.fillText((isMe?'나 · ':'')+webName(actor.kind),x,y+36);
-    }
-    c.restore();
-    const mx=this.width-112,my=this.width<600?this.height-192:16,mw=96,mh=59;c.fillStyle='#fffdf1dc';c.fillRect(mx-5,my-5,mw+10,mh+10);
-    for(const a of h.actors)if(a.respawn<=0){c.fillStyle=h.canEat(a.kind,h.role)?'#dca83c':'#aa7b67';c.fillRect(mx+a.x/HUNT_WIDTH*mw-1,my+a.y/HUNT_HEIGHT*mh-1,3,3);}
-    c.fillStyle='#326b4c';c.beginPath();c.arc(mx+me.x/HUNT_WIDTH*mw,my+me.y/HUNT_HEIGHT*mh,3.5,0,7);c.fill();
+  updateHUD(){
+    const h=this.activity.hunt,g=this.get,m=h.mission,p=h.me,seconds=Math.ceil(h.world.remaining);
+    g('timer').textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
+    g('huntMissionTitle').textContent=m.complete?'✓ 미션 성공!':'이번 동물 먹이 미션';g('huntMissionCount').textContent=`${m.count} / ${m.goal}`;
+    g('huntMissionText').textContent=`먹이 ${m.goal}번 먹기 · 종류 ${m.found} / ${m.types}`;
+    g('huntMissionProgress').max=m.goal;g('huntMissionProgress').value=Math.min(m.count,m.goal);
+    g('huntHud').classList.toggle('complete',m.complete);
+    g('huntLearned').textContent=`직접 만난 먹이관계 ${this.activity.encountered.size}개`;
+    g('huntCooldown').textContent=p.cool>0?`${p.cool.toFixed(1)}초 뒤`:'준비 완료';g('huntAction').style.opacity=p.cool>0?'.65':'1';
+    g('huntCoverHint').textContent=p.role===3?'날아서 나무·바위를 통과해요':p.hidden?(hideProtected(p)?`🛡 숨기 보호 ${(HIDE_DURATION-p.hideTime).toFixed(1)}초`:'보호 끝! 숨어 있어도 잡힐 수 있어요.'):'나무·풀숲에서 멈추면 3초 보호돼요';
+    g('huntCoverHint').classList.toggle('exposed',p.hidden&&!hideProtected(p));
+    g('huntRespawn').hidden=p.respawn<=0||h.phase!=='playing';if(p.respawn>0)g('huntRespawn').textContent=`다시 출발해요! ${p.respawn.toFixed(1)}초 뒤`;
+    g('huntPaused').hidden=h.phase!=='paused'||!g('huntNotebook').hidden||g('helpDialog').open||g('soundDialog').open;
+    g('pauseButton').textContent=h.phase==='paused'?'계속하기':'잠깐 멈춤';g('huntRoundDone').hidden=h.phase!=='between';
+    g('huntControls').hidden=h.phase!=='playing';g('huntBook').disabled=!g('huntNotebook').hidden;g('pauseButton').disabled=g('huntEnd').disabled=!g('huntNotebook').hidden||h.phase==='between';
+    if(h.phase==='between'&&!this.resultPainted){this.paintResult();this.resultPainted=true;}
+    if(this.meal&&h.t-this.meal.at<1.8){if(this.shownMeal!==this.meal.id){g('huntMealToast').innerHTML=webMealCard(this.meal.eater,this.meal.food);this.shownMeal=this.meal.id;}g('huntMealToast').hidden=false;}else g('huntMealToast').hidden=true;
   }
 }

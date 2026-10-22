@@ -7,11 +7,11 @@ import base64
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / 'source'
 images = json.loads((SOURCE / 'assets-inline.json').read_text())
-for animal in ['mouse', 'sparrow']:
-    images[animal] = 'data:image/png;base64,' + base64.b64encode((SOURCE / 'assets' / (animal + '.png')).read_bytes()).decode()
+for key, filename in {'webAnimals': 'web-animals-pixel.png', 'clover': 'clover-pixel.png'}.items():
+    images[key] = 'data:image/png;base64,' + base64.b64encode((SOURCE / 'assets' / filename).read_bytes()).decode()
 modules = ['engine.js', 'projection.js', 'quiz.js', 'quiz-view.js', 'asset-frames.js',
            'motion-view.js', 'render.js', 'solo-state.js', 'audio.js',
-           'web-hunt.js', 'food-web.js', 'web-art.js', 'web-view.js', 'web-hunt-view.js', 'web-export.js', 'solo.js']
+           'web-ecosystem.js', 'web-asset-frames.js', 'web-hunt.js', 'food-web.js', 'web-art.js', 'web-view.js', 'web-hunt-view.js', 'web-export.js', 'guide.js', 'solo.js']
 parts = []
 for name in modules:
     source = (SOURCE / name).read_text()
@@ -21,8 +21,8 @@ for name in modules:
         source = source.replace("'./assets/animals-pixel.png'", json.dumps(images['animals']))
         source = source.replace("'./assets/forest-props-pixel.png'", json.dumps(images['props']))
     if name == 'web-art.js':
-        for animal in ['mouse', 'sparrow']:
-            source = source.replace("'./assets/" + animal + ".png'", json.dumps(images[animal]))
+        for key, filename in {'webAnimals': 'web-animals-pixel.png', 'clover': 'clover-pixel.png'}.items():
+            source = source.replace("'./assets/" + filename + "'", json.dumps(images[key]))
     parts.append(f'// {name}\n{source}')
 script = "(()=>{\n'use strict';\n" + '\n'.join(parts) + '\n})();'
 style = (SOURCE / 'style.css').read_text().replace('__ANIMALS__', images['animals']).replace('__PROPS__', images['props'])

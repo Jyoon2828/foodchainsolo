@@ -13,13 +13,13 @@ export function chainSequenceMarkup(order,count,{solved=false,wrongAt=-1,editabl
     return `<li class="chain-node">${card}${i<count-1?`<span class="chain-arrow ${i<order.length-1?'connected':''} ${i===wrongAt?'needs-review':''}" aria-hidden="true">→</span>`:''}</li>`;
   }).join('')}</ol>`;
 }
-export function feedingPictureMarkup(eater,food,{question=false}={}){
-  const picture=id=>id?organismPicture(id):'<span class="meal-question" aria-hidden="true">?</span><b>어떤 생물일까요?</b>';
+export function feedingPictureMarkup(eater,food,{question=false,pictureFor=organismPicture}={}){
+  const picture=id=>id?pictureFor(id):'<span class="meal-question" aria-hidden="true">?</span><b>어떤 생물일까요?</b>';
   return `<div class="feeding-scene ${question?'question-scene':'revealed-scene'}"><div class="feeding-eater"><small>먹는 생물</small><div class="meal-character">${picture(eater)}</div></div><div class="feeding-action" aria-hidden="true">${question?(eater?'무엇을 먹을까요?':'누가 먹을까요?'):'냠냠!'}</div><div class="feeding-food"><small>먹히는 생물 · 먹이</small><div class="meal-plate">${picture(food)}</div></div></div>`;
 }
-export function pictureQuizMarkup(puzzle){
+export function pictureQuizMarkup(puzzle,{pictureFor=organismPicture,nameFor=id=>QUIZ_ORGANISMS[id].name,idPrefix=''}={}){
   const {quiz,choice,solved,message}=puzzle;
   const eater=quiz.mode==='food'?quiz.subject:solved?choice:null;
   const food=quiz.mode==='hunter'?quiz.subject:solved?choice:null;
-  return `${feedingPictureMarkup(eater,food,{question:!solved})}<p class="picture-choice-title">${solved?'먹고 먹히는 관계를 그림으로 확인했어요!':'빈자리에 들어갈 생물 그림을 눌러요.'}</p><div class="picture-choices" role="group" aria-label="생물 그림 보기">${quiz.choices.map(id=>`<button id="pictureChoice-${id}" class="organism-card ${id===choice?(solved?'answer-correct':'answer-retry'):''}" data-picture-choice="${id}" ${solved?'disabled':''} aria-label="${QUIZ_ORGANISMS[id].name}">${organismPicture(id)}${solved&&id===choice?'<small>✓ 정답</small>':''}</button>`).join('')}</div><p id="quizFeedback" class="quiz-feedback ${solved?'correct':choice?'wrong':''}" role="status" aria-live="polite">${message}</p>`;
+  return `${feedingPictureMarkup(eater,food,{question:!solved,pictureFor})}<p class="picture-choice-title">${solved?'먹고 먹히는 관계를 그림으로 확인했어요!':'빈자리에 들어갈 생물 그림을 눌러요.'}</p><div class="picture-choices" role="group" aria-label="생물 그림 보기">${quiz.choices.map(id=>`<button id="${idPrefix}pictureChoice-${id}" class="organism-card ${id===choice?(solved?'answer-correct':'answer-retry'):''}" data-picture-choice="${id}" ${solved?'disabled':''} aria-label="${nameFor(id)}">${pictureFor(id)}${solved&&id===choice?'<small>✓ 정답</small>':''}</button>`).join('')}</div><p id="${idPrefix}quizFeedback" class="quiz-feedback ${solved?'correct':choice?'wrong':''}" role="status" aria-live="polite">${message}</p>`;
 }
