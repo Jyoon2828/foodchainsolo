@@ -37,9 +37,12 @@ function start(){
   $('home').hidden=true;$('summaryPanel').hidden=true;updateUI();audio.effect('start');
 }
 function goHome(){
-  if(((started&&!session.finished)||(webOpen&&foodWeb?.stage!=='complete'))&&!confirm('이번 게임의 탐험 기록이 지워져요. 처음 화면으로 돌아갈까요?'))return;
+  if(((started&&!session.finished)||(foodWeb&&foodWeb.stage!=='complete'&&(foodWeb.stage==='play'||foodWeb.records.length>0)))&&!confirm('이번 게임의 탐험 기록이 지워져요. 처음 화면으로 돌아갈까요?'))return;
+  resumeAfterHelp=false;resumeAfterSound=false;
+  for(const id of ['helpDialog','soundDialog','settingsDialog'])if($(id).open)$(id).close();
   audio.silence();huntView?.dispose();huntView=null;
-  roundPuzzle=null;foodWeb=null;webOpen=false;
+  roundPuzzle=null;foodWeb=null;webOpen=false;guideOpen=false;builderOpen=false;builderOrigin='home';
+  $('guidePanel').hidden=true;$('builderPanel').hidden=true;$('toast').hidden=true;
   clearControls();session=new SoloSession();started=false;shownRound=-1;fullMap=false;action=0;lastEvent=0;toastUntil=0;learnerSound.reset();resetView();
   $('home').hidden=false;$('roundPanel').hidden=true;$('summaryPanel').hidden=true;updateUI();
 }
@@ -54,6 +57,7 @@ function input(){
 }
 function skill(){if(session.world.phase!=='playing'||$('helpDialog').open||$('soundDialog').open)return;if(session.me.role===0){target=null;route=[];}action++;navigator.vibrate?.(15);}
 $('gameSettings').onclick=()=>$('settingsDialog').showModal();$('settingsDone').onclick=()=>$('settingsDialog').close();
+document.querySelectorAll('[data-go-home]').forEach(button=>button.onclick=goHome);
 $('startButton').onclick=()=>showGuide('chain');$('homeButton').onclick=goHome;$('restartButton').onclick=goHome;
 $('pauseButton').onclick=()=>{if(webOpen&&huntView){huntView.togglePause();return;}if(!session.pause()){unlockSound();session.resume();}clearControls();updateUI();};
 $('resumeButton').onclick=()=>{unlockSound();session.resume();updateUI();};
@@ -136,7 +140,7 @@ $('openBuilder').onclick=()=>openBuilder('home');
 function fitWebBoard(){const wrap=$('webBoardScroll'),board=wrap?.querySelector('.web-board');if(!board)return;const r=wrap.getBoundingClientRect();board.style.transform=`translate(-50%,-50%) scale(${Math.min(r.width/1000,r.height/660)})`;}
 new ResizeObserver(fitWebBoard).observe($('webContent'));
 $('openWebDirect').onclick=()=>showGuide('web');
-const showGuide=installGuide({startChain:start,startWeb:openFoodWeb,onOpen:mode=>{guideMode=mode;guideOpen=true;updateUI();},onClose:()=>{guideOpen=false;updateUI();}});
+const showGuide=installGuide({startChain:start,startWeb:openFoodWeb,onHome:goHome,onOpen:mode=>{guideMode=mode;guideOpen=true;updateUI();},onClose:()=>{guideOpen=false;updateUI();}});
 function paintFoodWeb(focusId){
   huntView?.dispose();huntView=null;
   const root=$('webContent'),scrollLeft=$('webBoardScroll')?.scrollLeft||0;
@@ -180,7 +184,7 @@ function updateUI(){
   $('hud').hidden=!active;$('controls').hidden=!active||world.phase!=='playing';$('roundClock').hidden=builderOpen||guideOpen||!(huntActive||started&&!webOpen);
   for(const id of ['pauseButton','mapButton'])$(id).hidden=builderOpen||guideOpen||!(huntActive||started&&!webOpen);
   for(const id of ['huntBook','huntEnd'])$(id).hidden=!huntActive||guideOpen;
-  $('homeButton').hidden=builderOpen||guideOpen||(!started&&!webOpen);$('webPanel').hidden=!webOpen;
+  $('homeButton').hidden=false;$('webPanel').hidden=!webOpen;
   $('pauseButton').disabled=!['playing','paused'].includes(world.phase);$('pauseButton').textContent=world.phase==='paused'?'계속하기':'잠깐 멈춤';
   $('pausePanel').hidden=builderOpen||webOpen||world.phase!=='paused'||$('helpDialog').open||$('soundDialog').open;$('roundPanel').hidden=builderOpen||webOpen||world.phase!=='between';$('summaryPanel').hidden=builderOpen||guideOpen||!session.finished||webOpen;
   if(world.phase==='between'&&shownRound!==world.round){clearControls();paintRound();}

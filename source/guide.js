@@ -20,7 +20,7 @@ export function guideModel(mode){
  foods:id=>edges.filter(([,eater])=>eater===id).map(([food])=>food),
  predators:id=>edges.filter(([food])=>food===id).map(([,eater])=>eater)};
 }
-export function installGuide({startChain,startWeb,onOpen,onClose}){
+export function installGuide({startChain,startWeb,onOpen,onClose,onHome}){
  const panel=document.getElementById('guidePanel'),root=document.getElementById('guideContent');
  let current=0,preferred='chain',restoreHome=true;const visited={chain:new Set(),web:new Set()};
  function close(){panel.hidden=true;document.getElementById('home').hidden=!restoreHome;onClose?.();}
@@ -35,7 +35,7 @@ export function installGuide({startChain,startWeb,onOpen,onClose}){
   <div class="guide-launch"><p>${seen.size===order.length?'숲 친구들을 모두 살펴봤어요. 이제 출발해요!':`${order.length}종의 설명과 먹이 그림을 살펴보면 체험을 시작할 수 있어요.`}</p><div><button id="guideBegin" class="primary" ${seen.size<order.length?'disabled':''}>${preferred==='chain'?'먹이사슬 체험 시작하기':'먹이그물 체험할 동물 고르기'} →</button></div></div>`;
   root.querySelectorAll('[data-guide-index]').forEach(b=>b.onclick=()=>{current=+b.dataset.guideIndex;paint();});
   document.getElementById('guidePrev').onclick=()=>{current--;paint();};document.getElementById('guideNext').onclick=()=>{current++;paint();};
-  document.getElementById('guideClose').onclick=()=>{close();document.getElementById(restoreHome?(preferred==='chain'?'startButton':'openWebDirect'):'continueToWeb')?.focus();};
+  document.getElementById('guideClose').onclick=()=>{if(onHome){onHome();return;}close();document.getElementById(restoreHome?(preferred==='chain'?'startButton':'openWebDirect'):'continueToWeb')?.focus();};
   document.getElementById('guideBegin').onclick=()=>{close();(preferred==='chain'?startChain:startWeb)();};
   panel.scrollTop=0;document.getElementById('guideTitle').focus({preventScroll:true});
  }
