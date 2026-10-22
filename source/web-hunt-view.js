@@ -7,8 +7,8 @@ import {webPicture,webMealCard,webRendererArtwork} from './web-art.js';
 import {pictureQuizMarkup} from './quiz-view.js';
 
 export class WebHuntGame{
-  constructor(canvas,activity,{audio,onAdvance,onUpdate}={}){
-    this.canvas=canvas;this.activity=activity;this.audio=audio;this.onAdvance=onAdvance;this.onUpdate=onUpdate;
+  constructor(canvas,activity,{audio,onAdvance,onUpdate,onBuild}={}){
+    this.onBuild=onBuild;this.canvas=canvas;this.activity=activity;this.audio=audio;this.onAdvance=onAdvance;this.onUpdate=onUpdate;
     this.fullMap=false;this.keys=new Set();this.joy={x:0,y:0};this.target=null;this.route=[];this.action=0;this.accumulator=0;this.lastHUD=0;
     this.lastPhase=activity.hunt.phase;this.lastSound=activity.hunt.serial;this.bookResume=false;this.get=id=>document.getElementById(id);
     const h=activity.hunt,g=this.get;
@@ -71,12 +71,13 @@ export class WebHuntGame{
   }
   paintResult(){
     const h=this.activity.hunt,root=this.get('huntRoundContent'),m=h.mission,p=h.quiz;
-    root.innerHTML=`<span class="eyebrow">${webName(h.role)} 체험 정리</span><h3>누가 무엇을 먹었나요?</h3><div class="mission-result ${m.complete?'complete':''}"><b>${m.complete?'✓ 먹이 미션 성공!':'이번 체험의 먹이 기록'}</b><span>먹이 먹기 ${m.count}번 / 목표 ${m.goal}번 · ${m.found}종류 / 목표 ${m.types}종류</span></div><div class="web-round-quiz"><h4>${p.quiz.question}</h4>${pictureQuizMarkup(p,{pictureFor:webPicture,nameFor:webName,idPrefix:'web-'})}</div><div class="web-round-actions"><button id="webChooseAgain" class="secondary wide" ${p.solved?'':'disabled'}>다른 동물 고르기</button><button id="webReview" class="primary wide" ${p.solved?'':'disabled'}>나의 먹이그물 살펴보기</button></div>`;
+    root.innerHTML=`<span class="eyebrow">${webName(h.role)} 체험 정리</span><h3>누가 무엇을 먹었나요?</h3><div class="mission-result ${m.complete?'complete':''}"><b>${m.complete?'✓ 먹이 미션 성공!':'이번 체험의 먹이 기록'}</b><span>먹이 먹기 ${m.count}번 / 목표 ${m.goal}번 · ${m.found}종류 / 목표 ${m.types}종류</span></div><div class="web-round-quiz"><h4>${p.quiz.question}</h4>${pictureQuizMarkup(p,{pictureFor:webPicture,nameFor:webName,idPrefix:'web-'})}</div><div class="web-round-actions"><button id="webChooseAgain" class="secondary wide" ${p.solved?'':'disabled'}>다른 동물 고르기</button><button id="webReview" class="primary wide" ${p.solved?'':'disabled'}>나의 먹이그물 살펴보기</button><button id="webBuildFromTrial" class="secondary wide" ${p.solved?'':'disabled'}>직접 먹이그물 만들기</button></div>`;
     for(const button of root.querySelectorAll('[data-picture-choice]'))button.onclick=()=>{
       if(p.solved)return;this.audio.unlock();const correct=this.activity.answerQuiz(button.dataset.pictureChoice);this.audio.effect(correct?'correct':'retry');this.paintResult();
       if(correct)this.get('webChooseAgain').focus();else this.get('web-pictureChoice-'+button.dataset.pictureChoice)?.focus();
     };
     this.get('webChooseAgain').onclick=()=>{if(this.activity.chooseAgain())this.onAdvance?.();};
+    this.get('webBuildFromTrial').onclick=()=>{if(p.solved)this.onBuild?.();};
     this.get('webReview').onclick=()=>{if(this.activity.review())this.onAdvance?.();};
   }
   updateHUD(){

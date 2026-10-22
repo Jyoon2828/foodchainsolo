@@ -1,3 +1,37 @@
+먹이사슬·먹이그물 개인 체험용 1.9
+검사일: 2026-10-22
+
+자동 검사: 63개 통과 (기존 59개 + 만들기 4개)
+명령: node --test tests/*.test.mjs
+
+만들기 검증
+- 처음에는 연결 선이 없고 10종 생물만 표시
+- 먹이 → 먹는 생물 두 번 누르기, 같은 생물 연결/중복 연결 방지
+- 17개 대표 관계, 반대 방향과 모형에 없는 연결 확인
+- 선 삭제/모두 삭제/되돌리기, 수정 후 확인 상태 초기화
+- 지우기 모드에서 실수로 새 연결 추가 방지, 학생 간 상태 독립
+- 브라우저 터치 입력으로 연결·삭제·되돌리기·확인 실행
+- 이름/설명 작성, 1600×1700 PNG 다운로드와 저장 이미지 확인
+- 활동 화면으로 나갔다 돌아와도 만들던 내용 유지
+- 새로고침 시 상태 초기화, 외부 요청 없이 실행
+
+화면과 진행 검증
+- 가로 1024×600·1280×800, 세로 800×1280에서 홈/생물 소개/동물 선택/만들기 배치 확인
+- 낮은 가로 화면에서 그림 퀴즈/요약/변화 관찰/생각 쓰기/완료 화면의 주요 내용과 버튼 표시 확인
+- 세 가지 시작 버튼의 크기 동일
+- 먹이사슬 네 역할 → 그림 퀴즈 → 요약 → 먹이그물 소개 → 뱀 선택 → 그림 퀴즈 → 직접 만들기 왕복
+- 개구리 가리기 → 두 대체 먹이 찾기 → 관찰한 내용 쓰기 → 완료 → 만들기 왕복
+- 만들기 전용 도움말, 기존 먹이그물 도움말과 특수 동작 안내 유지
+- 브라우저 실행 오류 없음
+- 내부 크기 검증에서 주요 기본 화면의 상하·좌우 넘침 없음. 펼친 상세 설명/긴 학생 글/작은 기기에는 필요한 내부 스크롤 허용
+
+물리 기기에서 미확인
+- 실제 갤럭시탭의 브라우저 주소창·화면 확대 설정·가상 키보드와 터치 감도
+- 실제 스피커 소리와 플레이 체감
+- 사용자 배포 주소의 반영 여부
+
+아래는 이전 버전 검사 기록입니다.
+----------------------------------------
 먹이사슬·먹이그물 개인 체험용 1.6.0
 검사일: 2026-10-22
 
@@ -85,3 +119,9 @@ DOM 대역과 실제 내장 그림/네이티브 캔버스를 사용했습니다.
 - 1280x800, 1024x600, 800x1280 and 360x800 viewport checks; Korean font layout inspected.
 - Test browser and font dependencies are external QA tools only, not part of the app.
 - Actual Galaxy Tab touch feel and speaker audio remain device checks.
+
+
+1.8.1 help-only update:
+- Rebuilt bundle syntax and 3 offline packaging checks passed.
+- Browser checks passed: chain/web separation; web guide help; all 8 species; selected mouse and sparrow instructions; hiding conditions; help pauses/resumes the game; 360x800 dialog bounds; no runtime errors.
+- SHA-256 checks confirmed engine.js, web-hunt.js and web-hunt-view.js are identical to 1.8. No special ability or keyboard handling was changed.

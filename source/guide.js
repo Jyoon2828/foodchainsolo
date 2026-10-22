@@ -39,5 +39,5 @@ export function installGuide({startChain,startWeb,onOpen,onClose}){
   document.getElementById('guideBegin').onclick=()=>{close();(preferred==='chain'?startChain:startWeb)();};
   panel.scrollTop=0;document.getElementById('guideTitle').focus({preventScroll:true});
  }
- return mode=>{preferred=mode;current=0;restoreHome=!document.getElementById('home').hidden;document.getElementById('home').hidden=true;panel.hidden=false;onOpen?.();paint();};
+ return mode=>{preferred=mode;current=0;restoreHome=!document.getElementById('home').hidden;document.getElementById('home').hidden=true;panel.hidden=false;onOpen?.(mode);paint();};
 }

@@ -11,7 +11,7 @@ for key, filename in {'webAnimals': 'web-animals-pixel.png', 'clover': 'clover-p
     images[key] = 'data:image/png;base64,' + base64.b64encode((SOURCE / 'assets' / filename).read_bytes()).decode()
 modules = ['engine.js', 'projection.js', 'quiz.js', 'quiz-view.js', 'asset-frames.js',
            'motion-view.js', 'render.js', 'solo-state.js', 'audio.js',
-           'web-ecosystem.js', 'web-asset-frames.js', 'web-hunt.js', 'food-web.js', 'web-art.js', 'web-view.js', 'web-hunt-view.js', 'web-export.js', 'guide.js', 'solo.js']
+           'web-ecosystem.js', 'web-asset-frames.js', 'web-hunt.js', 'food-web.js', 'web-art.js', 'web-view.js', 'web-hunt-view.js', 'web-export.js', 'guide.js', 'help-view.js', 'web-builder.js', 'builder-export.js', 'builder-view.js', 'solo.js']
 parts = []
 for name in modules:
     source = (SOURCE / name).read_text()
