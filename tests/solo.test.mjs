@@ -8,7 +8,7 @@ function endRound(session){for(let n=0;n<1300&&session.world.phase==='playing';n
 test('one learner starts with twelve computer companions and no class membership',()=>{
   const s=new SoloSession();s.start();const all=Object.values(s.world.players);
   assert.equal(all.filter(p=>!p.bot).length,1);assert.equal(all.filter(p=>p.bot).length,12);
-  for(let role=0;role<4;role++)assert.equal(all.filter(p=>p.bot&&p.role===role).length,3);
+  for(let role=0;role<4;role++)assert.equal(all.filter(p=>p.bot&&p.role===role).length,[4,3,3,2][role]);
   assert.equal(s.world.duration,90);assert.equal(s.me.role,0);
 });
 test('local instances are independent and settings set actual time and population',()=>{
@@ -24,17 +24,17 @@ test('pause freezes the local clock and player until explicitly resumed',()=>{
 test('one round records the mission once and the correct quiz gates the next role',()=>{
   const s=new SoloSession();s.start(30,0);s.me.fed=2;endRound(s);
   assert.equal(s.records.length,1);assert.equal(s.records[0].count,2);assert.equal(s.records[0].complete,true);
-  assert.equal(s.next(),false);assert.equal(s.answer(0),false);assert.equal(s.next(),false);
+  assert.equal(s.next(),false);assert.equal(s.answer(['grasshopper','rice']),false);assert.equal(s.next(),false);
   assert.equal(s.answer(QUIZZES[0].answer),true);assert.equal(s.records.length,1);
   assert.equal(s.next(),true);assert.equal(s.me.role,1);assert.equal(s.me.fed,0);
 });
-test('all four roles finish with their own records, quizzes and twelve companions',()=>{
+test('all four roles finish with their own records, quizzes and adjusted food populations',()=>{
   const s=new SoloSession();s.start(30,3);
   for(let role=0;role<4;role++){
     assert.equal(s.me.role,role);endRound(s);assert.equal(s.answer(QUIZZES[role].answer),true);assert.equal(s.next(),true);
   }
   assert.equal(s.finished,true);assert.equal(s.world.phase,'finished');assert.deepEqual(s.records.map(r=>r.role),[0,1,2,3]);
-  assert.equal(Object.values(s.world.players).filter(p=>p.bot).length,12);assert.equal(s.me.visited.length,4);
+  assert.equal(Object.values(s.world.players).filter(p=>p.bot).length,17);assert.equal(s.me.visited.length,4);
 });
 test('restarting clears all personal records and fresh companions appear',()=>{
   const s=new SoloSession();s.start(30,2);s.me.fed=4;s.me.score=4;endRound(s);s.start();

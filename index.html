@@ -132,6 +132,27 @@ input:focus-visible{outline:3px solid #e2aa44;outline-offset:3px}
 .web-image-mouse{background-image:var(--web-mouse-image)}.web-image-sparrow{background-image:var(--web-sparrow-image)}
 .web-node .animal,.web-node .rice-picture,.web-node .web-new-animal{width:72%;height:auto;aspect-ratio:1;max-height:none}
 
+/* Questions show eating scenes and picture choices. */
+.feeding-scene{display:flex;align-items:center;justify-content:center;gap:22px;margin:16px auto 12px;padding:18px 22px;border-radius:18px;background:#eef4e4;max-width:700px}
+.feeding-eater,.feeding-food{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:130px}.feeding-scene small{font-size:11px;font-weight:700;color:#7f926a}
+.meal-character,.meal-plate{display:flex;position:relative;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:130px;min-height:148px}
+.meal-character .animal,.meal-plate .animal,.meal-plate .rice-picture{width:100px;height:100px}.meal-character b,.meal-plate b{font-size:16px;z-index:1}.meal-plate{border-radius:60% 60% 35% 35%;background:linear-gradient(transparent 65%,#fffdf4 65%);box-shadow:0 6px 0 #d8dfc5}
+.meal-question{width:100px;height:100px;display:grid;place-items:center;font-size:55px;color:#b0c39a;font-weight:800;border:2px dashed #b9cba6;border-radius:22px;background:#fafff0}
+.feeding-action{font-size:14px;font-weight:800;max-width:90px;text-align:center;color:#8aa064;line-height:1.7}.revealed-scene .feeding-action{font-size:24px;color:#7e9f4f}.picture-choice-title{text-align:center;font-size:13px!important;margin:10px 0 14px!important}.picture-choices{display:flex;justify-content:center;gap:16px}.picture-choices .organism-card{width:135px;min-height:139px}.picture-choices .animal,.picture-choices .rice-picture{width:91px;height:91px}.picture-choices .answer-correct{background:#e2f2d5;border-color:#83ac64;opacity:1}.picture-choices .answer-retry{background:#fff1d7;border-color:#d3aa63}.picture-choices small{font-size:11px;color:#5f8b46}
+.web-meal-card{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;background:#f5f8e9;border:1px solid #d9e5cc;border-radius:12px}.web-meal-card>div{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}.web-meal-card small{font-size:9px;color:#8c9e79}.web-meal-card .animal,.web-meal-card .rice-picture,.web-meal-card .web-new-animal{width:50px;height:50px}.web-meal-card b{font-size:12px}.web-meal-card .meal-word{font-size:11px;color:#96a66f}.evidence-meals{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.web-paths button{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}.path-picture{display:flex;flex-direction:column;align-items:center;gap:3px}.path-picture .animal,.path-picture .rice-picture,.path-picture .web-new-animal{width:45px;height:45px}.path-picture b{font-size:10px}.path-join{font-size:22px;color:#a7b793}
+/* A second, fully local forest game discovers the extra food relations. */
+.web-card.web-playing{height:100%;padding:0;overflow:hidden;display:flex;flex-direction:column;width:100%;scrollbar-gutter:auto}
+.hunt-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:9px 15px;background:#fffdf4;border-bottom:1px solid #dce6d0;flex-shrink:0}.hunt-topbar>div{display:flex;align-items:center;gap:12px}.hunt-topbar b{font-size:15px}.hunt-topbar span{font-size:12px;color:#82966f}.hunt-topbar button{font-size:11px;min-height:38px;padding:6px 10px}
+.hunt-arena{position:relative;flex:1;min-height:260px;overflow:hidden;background:#b4d58e}#webHuntField{display:block;width:100%;height:100%;touch-action:none;image-rendering:pixelated}
+.hunt-goals{position:absolute;left:13px;top:12px;display:flex;gap:15px;align-items:center;padding:10px 14px;border:1px solid white;border-radius:14px;background:#fffef0ee;max-width:calc(100% - 145px);pointer-events:none}.hunt-goals>div>b{font-size:12px;display:block;margin-bottom:8px}.hunt-role-picture{display:flex;align-items:center;flex-direction:column;gap:2px;min-width:62px}.hunt-role-picture .animal,.hunt-role-picture .web-new-animal{width:57px;height:57px}.hunt-role-picture b{font-size:13px}.hunt-role-picture span{font-size:9px;color:#8c9f78}.hunt-food-pictures{display:flex;align-items:center;gap:11px}.hunt-goal{display:flex;align-items:center;flex-direction:column;gap:3px;min-width:53px;opacity:.8}.hunt-goal .animal,.hunt-goal .rice-picture,.hunt-goal .web-new-animal{width:47px;height:47px}.hunt-goal b{font-size:11px}.hunt-goal small{font-size:9px;color:#9c986e}.hunt-goal.found{opacity:1}.hunt-goal.found small{color:#518548;font-weight:800}
+.hunt-learned{position:absolute;right:12px;top:92px;font-size:11px;font-weight:700;background:#fff9dcec;padding:8px 10px;border-radius:9px;pointer-events:none}.hunt-mobile-controls{position:absolute;bottom:20px;left:20px;right:20px;display:flex;align-items:flex-end;justify-content:space-between;pointer-events:none}.hunt-mobile-controls .joystick{pointer-events:auto;width:112px;height:112px}.hunt-mobile-controls .joystick span{left:29px;top:29px}.hunt-dash{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:112px;height:112px;border-radius:50%;border:3px solid #fff9e8;background:#ffdfab;box-shadow:0 4px 0 #b39b6c;pointer-events:auto;touch-action:none;font-size:13px}.hunt-dash small{font-size:10px;font-weight:400}
+.hunt-meal-toast{position:absolute;left:50%;bottom:24px;translate:-50% 0;pointer-events:none;max-width:calc(100% - 270px);filter:drop-shadow(0 4px 12px #47623926)}.hunt-meal-toast .web-meal-card{background:#fffdf2ed;padding:6px 10px;gap:7px}.hunt-meal-toast .animal,.hunt-meal-toast .rice-picture,.hunt-meal-toast .web-new-animal{width:40px;height:40px}
+.hunt-modal{position:absolute;inset:0;display:grid;place-items:center;background:#2d503b70;padding:20px;backdrop-filter:blur(2px);z-index:5}.hunt-modal>div{background:#fffdf2;border:1px solid white;box-shadow:0 12px 45px #26462a30;border-radius:18px;padding:23px;width:min(580px,100%);max-height:100%;overflow:auto;text-align:center}.hunt-modal h3{font-size:22px;line-height:1.6;margin:10px 0 18px}.hunt-modal p{font-size:13px}.hunt-modal .web-meal-card{margin:8px auto;max-width:340px}.hunt-notebook-card{width:min(790px,100%)!important}#huntNotebookMeals{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}#huntNotebookMeals .web-meal-card{width:100%;margin:0}.hunt-respawn{position:absolute;top:50%;left:50%;translate:-50% -50%;padding:20px;background:#fffdf0ef;border-radius:12px;text-align:center;font-weight:700;font-size:18px;pointer-events:none}.hunt-control-note{margin:0!important;padding:7px 10px;background:#fffdf4;text-align:center;font-size:10px!important;line-height:1.5!important;flex-shrink:0}
+@media(max-width:600px){.feeding-scene{gap:10px;padding:14px 8px}.feeding-eater,.feeding-food{min-width:100px}.meal-character,.meal-plate{min-width:100px;min-height:125px}.meal-character .animal,.meal-plate .animal,.meal-plate .rice-picture,.meal-question{width:78px;height:78px}.meal-character b,.meal-plate b{font-size:14px}.feeding-action{font-size:11px;max-width:60px}.feeding-scene small{font-size:9px}.picture-choices{gap:9px}.picture-choices .organism-card{width:92px;min-height:112px}.picture-choices .animal,.picture-choices .rice-picture{width:63px;height:63px}.hunt-topbar{gap:5px;padding:7px 9px;flex-wrap:wrap}.hunt-topbar b{font-size:13px}.hunt-topbar span{font-size:10px}.hunt-topbar>div{gap:7px}.hunt-topbar button{font-size:10px;padding:5px 8px;min-height:34px}.hunt-goals{left:8px;top:8px;padding:8px 10px;gap:10px;max-width:calc(100% - 16px)}.hunt-role-picture{min-width:50px}.hunt-role-picture .animal,.hunt-role-picture .web-new-animal{width:44px;height:44px}.hunt-goals>div>b{font-size:10px}.hunt-food-pictures{gap:8px}.hunt-goal{min-width:45px}.hunt-goal .animal,.hunt-goal .rice-picture,.hunt-goal .web-new-animal{width:39px;height:39px}.hunt-learned{top:137px;font-size:10px}.hunt-mobile-controls{bottom:15px;left:13px;right:13px}.hunt-mobile-controls .joystick{width:96px;height:96px}.hunt-mobile-controls .joystick span{left:21px;top:21px}.hunt-dash{width:92px;height:92px;font-size:11px}.hunt-dash small{font-size:9px}.hunt-meal-toast{bottom:126px;max-width:calc(100% - 40px)}.hunt-modal{padding:12px}.hunt-modal>div{padding:18px 15px}.hunt-modal h3{font-size:18px}#huntNotebookMeals{grid-template-columns:1fr}.hunt-control-note{font-size:9px!important}.path-picture .animal,.path-picture .rice-picture,.path-picture .web-new-animal{width:34px;height:34px}}
+.build-label{display:block;font-size:10px;color:#73925d;margin-top:9px;text-align:center}
+@media(max-height:520px){.hunt-arena{min-height:160px}.hunt-control-note{display:none}.hunt-topbar{min-height:44px;padding:5px 10px}.hunt-goals{padding:6px 10px}.hunt-role-picture .animal,.hunt-role-picture .web-new-animal{width:38px;height:38px}.hunt-goal .animal,.hunt-goal .rice-picture,.hunt-goal .web-new-animal{width:34px;height:34px}.hunt-mobile-controls .joystick{width:86px;height:86px}.hunt-mobile-controls .joystick span{left:16px;top:16px}.hunt-dash{width:84px;height:84px}}
+
 </style>
 </head>
 <body>
@@ -167,7 +188,7 @@ input:focus-visible{outline:3px solid #e2aa44;outline-offset:3px}
         <button id="startButton" class="primary start-button">숲속 탐험 시작하기 <span>→</span></button>
         <button id="openWebDirect" class="web-direct">먹이사슬을 이미 해 봤다면 · 먹이그물 활동으로 →</button>
         <details class="settings"><summary>체험 시간·숲 친구 바꾸기</summary><div><label>한 역할의 시간<select id="duration"><option value="60">60초</option><option value="90" selected>90초</option><option value="120">120초</option></select></label><label>처음 숲 친구<select id="bots"><option value="2">8마리</option><option value="3" selected>12마리</option><option value="4">16마리</option></select></label></div></details>
-        <small class="home-foot">시작하면 작은 소리로 음악이 나와요. 위쪽 ♫에서 바꿀 수 있어요.<br>먹이 동물은 역할에 맞춰 더 등장해요.<br>혼자 진행하는 체험이에요. 친구들도 각자의 숲에서 놀아요.</small>
+        <small class="home-foot">시작하면 작은 소리로 음악이 나와요. 위쪽 ♫에서 바꿀 수 있어요.<br>먹이 동물은 역할에 맞춰 더 등장해요.<br>혼자 진행하는 체험이에요. 친구들도 각자의 숲에서 놀아요.</small><small class="build-label">개인용 1.5 · 그림 퀴즈·먹이그물 게임</small>
       </div>
     </section>
     <section id="pausePanel" class="overlay" hidden><div class="panel pause-card"><span class="eyebrow">잠깐 쉬어 가요</span><h2>숲이 기다리고 있어요</h2><p>내 먹이와 천적을 다시 떠올려 볼까요?<br>계속하기를 누르면 시간이 다시 흘러요.</p><button id="resumeButton" class="primary wide">계속 탐험하기</button><button id="restartButton" class="secondary wide">처음으로 돌아가기</button></div></section>
@@ -176,8 +197,8 @@ input:focus-visible{outline:3px solid #e2aa44;outline-offset:3px}
     <section id="webPanel" class="overlay web-overlay" hidden aria-label="먹이그물 활동"><div id="webContent" class="panel web-card"></div></section>
   </main>
 </div>
-<dialog id="soundDialog" aria-labelledby="soundTitle"><button id="closeSound" class="close-button" aria-label="소리 설정 닫기">×</button><span class="eyebrow">내 숲의 소리</span><h2 id="soundTitle">편안한 소리로 탐험해요</h2><p class="sound-intro">잔잔한 음악과 행동 소리를 따로 고를 수 있어요.</p><label class="sound-option"><span><b>숲속 BGM</b><small>술래잡기를 하는 동안 흐르는 잔잔한 음악</small></span><input id="musicEnabled" type="checkbox" checked></label><label class="sound-option"><span><b>효과음</b><small>먹이 먹기 · 특수 동작 · 미션 성공</small></span><input id="effectsEnabled" type="checkbox" checked></label><label class="sound-volume" for="soundVolume"><span>전체 음량 <output id="volumeValue" for="soundVolume">35%</output></span><input id="soundVolume" type="range" min="0" max="100" step="1" value="35"></label><p id="soundStatus" class="sound-status" role="status">시작 버튼을 누르면 소리가 켜져요.</p><button id="soundPreview" class="secondary wide">효과음 들어보기</button><button id="soundDone" class="primary wide">설정 완료</button></dialog>
-<dialog id="helpDialog"><button id="closeHelp" class="close-button" aria-label="닫기">×</button><span class="eyebrow">놀이 방법</span><h2>먹고, 피하고, 숨어요!</h2><ol><li>이동 조작판, 방향키·WASD로 움직여요. 빈 곳을 눌러 이동할 수도 있어요.</li><li>먹이에 가까이 가면 자동으로 먹어요. 제한 시간 안에 화면의 먹이 미션에 도전해요.</li><li>행동 버튼 또는 스페이스로 특수 동작을 써요. 메뚜기는 나무·바위를 훌쩍 뛰어넘어요.</li><li>메뚜기·개구리·뱀은 나무 가까이나 풀숲에서 멈추면 처음 3초 동안 잡히지 않아요. 이후에는 숨어 있어도 잡혀요. 밖에 1초 이상 있어야 다시 보호받아요.</li><li>잡혀도 2.5초 뒤 다시 출발해요. 이번 역할에서 먹은 수는 유지돼요.</li><li>한 역할이 끝나면 그림 카드를 눌러 먹이사슬을 연결해요. 먹히는 생물에서 먹는 생물 쪽으로 화살표를 놓고, 연결을 확인한 뒤 다음 동물 역할로 바꾸어요.</li><li>먹이그물 활동에서는 먹히는 생물과 먹는 생물 그림을 차례로 눌러요. 생쥐·참새의 단서로 새 관계를 더하고, 개구리를 가렸을 때 뱀에게 남는 먹이도 찾아요.</li></ol><p class="chain">🌾 → 🦗 → 🐸 → 🐍 → 🦅</p><p class="small">화살표는 먹히는 생물에서 먹는 생물 쪽이에요.<br>교과서의 대표 먹이사슬을 단순화한 놀이예요.</p><button id="helpDone" class="primary wide">알겠어요!</button></dialog>
+<dialog id="soundDialog" aria-labelledby="soundTitle"><button id="closeSound" class="close-button" aria-label="소리 설정 닫기">×</button><span class="eyebrow">내 숲의 소리</span><h2 id="soundTitle">편안한 소리로 탐험해요</h2><p class="sound-intro">잔잔한 음악과 행동 소리를 따로 고를 수 있어요.</p><label class="sound-option"><span><b>숲속 BGM</b><small>두 숲 게임에서 흐르는 잔잔한 음악</small></span><input id="musicEnabled" type="checkbox" checked></label><label class="sound-option"><span><b>효과음</b><small>먹이 먹기 · 특수 동작 · 미션 성공</small></span><input id="effectsEnabled" type="checkbox" checked></label><label class="sound-volume" for="soundVolume"><span>전체 음량 <output id="volumeValue" for="soundVolume">35%</output></span><input id="soundVolume" type="range" min="0" max="100" step="1" value="35"></label><p id="soundStatus" class="sound-status" role="status">시작 버튼을 누르면 소리가 켜져요.</p><button id="soundPreview" class="secondary wide">효과음 들어보기</button><button id="soundDone" class="primary wide">설정 완료</button></dialog>
+<dialog id="helpDialog"><button id="closeHelp" class="close-button" aria-label="닫기">×</button><span class="eyebrow">놀이 방법</span><h2>먹고, 피하고, 숨어요!</h2><ol><li>이동 조작판, 방향키·WASD로 움직여요. 빈 곳을 눌러 이동할 수도 있어요.</li><li>먹이에 가까이 가면 자동으로 먹어요. 제한 시간 안에 화면의 먹이 미션에 도전해요.</li><li>행동 버튼 또는 스페이스로 특수 동작을 써요. 메뚜기는 나무·바위를 훌쩍 뛰어넘어요.</li><li>메뚜기·개구리·뱀은 나무 가까이나 풀숲에서 멈추면 처음 3초 동안 잡히지 않아요. 이후에는 숨어 있어도 잡혀요. 밖에 1초 이상 있어야 다시 보호받아요.</li><li>잡혀도 2.5초 뒤 다시 출발해요. 이번 역할에서 먹은 수는 유지돼요.</li><li>한 역할이 끝나면 생물과 먹이 그림을 보고 빈자리에 들어갈 그림을 골라요. 먹고 먹히는 관계를 확인한 뒤 다음 동물 역할로 바꾸어요.</li><li>먹이그물 숲 게임에서는 참새·생쥐·뱀·매를 조종해 서로 다른 먹이를 모두 찾아요. 그림 기록에서 만난 관계를 보고, 개구리가 없을 때 뱀에게 남는 먹이도 찾아요.</li></ol><p class="chain">🌾 → 🦗 → 🐸 → 🐍 → 🦅</p><p class="small">화살표는 먹히는 생물에서 먹는 생물 쪽이에요.<br>교과서의 대표 먹이사슬을 단순화한 놀이예요.</p><button id="helpDone" class="primary wide">알겠어요!</button></dialog>
 <script>
 (()=>{
 'use strict';
@@ -447,56 +468,21 @@ const QUIZ_ORGANISMS={
   frog:{name:'개구리',role:1},snake:{name:'뱀',role:2},hawk:{name:'매',role:3}
 };
 const QUIZZES=[
-  {question:'메뚜기가 벼를 먹었어요. 두 그림을 연결해 볼까요?',
-    chain:['rice','grasshopper'],
-    explanation:'벼에서 메뚜기 쪽으로 화살표를 놓아요. 벼는 먹히는 생물, 메뚜기는 먹는 생물이에요.'},
-  {question:'개구리의 먹이와 천적을 하나의 먹이사슬로 연결해요.',
-    chain:['grasshopper','frog','snake'],
-    explanation:'개구리는 메뚜기를 먹고, 뱀에게 먹혀요. 먹기도 하고 먹히기도 하는 생물이에요.'},
-  {question:'뱀의 먹이와 천적을 하나의 먹이사슬로 연결해요.',
-    chain:['frog','snake','hawk'],
-    explanation:'뱀은 개구리를 먹고, 매에게 먹혀요. 개구리 → 뱀 → 매로 이어져요.'},
-  {question:'다섯 그림을 모두 이어 숲속 먹이사슬을 완성해요!',
-    chain:['rice','grasshopper','frog','snake','hawk'],
-    explanation:'벼 → 메뚜기 → 개구리 → 뱀 → 매. 화살표는 먹히는 생물에서 먹는 생물 쪽이에요.'}
+  {question:'메뚜기가 먹는 먹이를 그림에서 골라요.',mode:'food',subject:'grasshopper',choices:['frog','rice','snake'],answer:'rice',chain:['rice','grasshopper'],explanation:'메뚜기가 벼를 먹어요.'},
+  {question:'개구리가 먹는 먹이를 그림에서 골라요.',mode:'food',subject:'frog',choices:['snake','grasshopper','rice'],answer:'grasshopper',chain:['grasshopper','frog','snake'],explanation:'개구리가 메뚜기를 먹어요.'},
+  {question:'이 놀이에서 개구리를 먹는 동물을 골라요.',mode:'hunter',subject:'frog',choices:['grasshopper','rice','snake'],answer:'snake',chain:['frog','snake','hawk'],explanation:'뱀이 개구리를 먹어요.'},
+  {question:'이 놀이에서 뱀을 먹는 동물을 골라요.',mode:'hunter',subject:'snake',choices:['frog','hawk','grasshopper'],answer:'hawk',chain:['rice','grasshopper','frog','snake','hawk'],explanation:'매가 뱀을 먹어요.'}
 ];
 function quizForRole(role){return QUIZZES[role]||QUIZZES[0];}
-function isCorrect(role,order){
-  const expected=quizForRole(role).chain;
-  return Array.isArray(order)&&order.length===expected.length&&expected.every((id,i)=>order[i]===id);
-}
-function evaluateChain(role,order){
-  const quiz=quizForRole(role);
-  if(!Array.isArray(order)||order.length!==quiz.chain.length){
-    return {status:'incomplete',wrongAt:-1,message:`그림 ${quiz.chain.length}개를 모두 놓은 뒤 연결을 확인해 보세요.`};
+function isCorrect(role,choice){return typeof choice==='string'&&choice===quizForRole(role).answer;}
+class PictureQuiz{
+  constructor(role){this.role=role;this.quiz=quizForRole(role);this.choice=null;this.solved=false;this.message='아래 그림을 눌러 빈자리를 채워 보세요.';}
+  choose(id){
+    if(this.solved||!this.quiz.choices.includes(id))return false;
+    this.choice=id;this.solved=isCorrect(this.role,id);
+    this.message=this.solved?'맞았어요! '+this.quiz.explanation:'다시 살펴볼까요? 실제로 먹고 먹혔던 모습을 떠올려 보세요.';
+    return this.solved;
   }
-  if(isCorrect(role,order))return {status:'correct',wrongAt:-1,message:'잘 연결했어요! '+quiz.explanation};
-  const wrongAt=order.findIndex((id,i)=>i<order.length-1&&!quiz.chain.some((food,k)=>food===id&&quiz.chain[k+1]===order[i+1]));
-  const a=QUIZ_ORGANISMS[order[wrongAt]],b=QUIZ_ORGANISMS[order[wrongAt+1]];
-  return {status:'wrong',wrongAt,message:a&&b?`${a.name} → ${b.name} 연결을 다시 생각해 보세요. 화살표는 먹히는 생물에서 먹는 생물 쪽이에요.`:'그림을 하나씩 골라 먹이관계를 다시 연결해 보세요.'};
-}
-
-class ChainQuiz{
-  constructor(role,random=Math.random){
-    this.role=role;this.quiz=quizForRole(role);this.order=[];this.result=null;
-    this.bank=[...this.quiz.chain];
-    for(let i=this.bank.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[this.bank[i],this.bank[j]]=[this.bank[j],this.bank[i]];}
-    // The bank is a set of choices rather than a prearranged solution.
-    if(isCorrect(role,this.bank))this.bank.push(this.bank.shift());
-  }
-  get complete(){return this.order.length===this.quiz.chain.length;}
-  get solved(){return this.result?.status==='correct';}
-  add(id){
-    if(this.solved||this.complete||!this.bank.includes(id)||this.order.includes(id))return false;
-    this.order.push(id);this.result=null;return true;
-  }
-  removeFrom(index){
-    if(this.solved||!Number.isInteger(index)||index<0||index>=this.order.length)return false;
-    this.order=this.order.slice(0,index);this.result=null;return true;
-  }
-  undo(){return this.removeFrom(this.order.length-1);}
-  clear(){if(this.solved)return false;this.order=[];this.result=null;return true;}
-  check(){this.result=evaluateChain(this.role,this.order);return this.result;}
 }
 
 // quiz-view.js
@@ -514,17 +500,15 @@ function chainSequenceMarkup(order,count,{solved=false,wrongAt=-1,editable=false
     return `<li class="chain-node">${card}${i<count-1?`<span class="chain-arrow ${i<order.length-1?'connected':''} ${i===wrongAt?'needs-review':''}" aria-hidden="true">→</span>`:''}</li>`;
   }).join('')}</ol>`;
 }
-function chainQuizMarkup(puzzle){
-  const {order,bank,quiz,result,solved}=puzzle;
-  const sequence=chainSequenceMarkup(order,quiz.chain.length,{solved,wrongAt:result?.wrongAt,editable:true});
-  const cards=bank.map(id=>{
-    const used=order.includes(id),name=QUIZ_ORGANISMS[id].name;
-    return `<button id="quizCard-${id}" class="organism-card ${used?'used':''}" data-organism="${id}" ${used?'disabled':''} aria-pressed="${used}" aria-label="${name}${used?', 이미 놓은 그림':', 다음 칸에 놓기'}">${organismPicture(id)}${used?'<span class="card-used" aria-hidden="true">✓</span>':''}</button>`;
-  }).join('');
-  const bankMarkup=solved?'':`<div class="chain-bank-head"><b>아래 그림을 순서대로 눌러요</b><span>${order.length} / ${quiz.chain.length}개</span></div><div class="chain-bank" role="group" aria-label="먹이사슬에 넣을 그림">${cards}</div><p class="chain-edit-note">위에 놓은 그림을 누르면 그곳부터 다시 놓을 수 있어요.</p>`;
-  const feedback=`<p id="quizFeedback" class="quiz-feedback ${result?.status||''}" role="status" aria-live="polite" ${result?'':'hidden'}>${result?.message||''}</p>`;
-  const actions=solved?'':`<div class="chain-actions"><div class="chain-tools"><button id="undoChain" ${order.length?'':'disabled'}>하나 되돌리기</button><button id="clearChain" ${order.length?'':'disabled'}>처음부터 연결</button></div><button id="checkChain" class="primary chain-check" ${puzzle.complete?'':'disabled'}>연결 확인하기</button></div>`;
-  return `<p class="chain-direction">먹히는 생물 <span aria-hidden="true">→</span> 먹는 생물</p><div class="chain-workspace">${sequence}</div>${bankMarkup}${feedback}${actions}`;
+function feedingPictureMarkup(eater,food,{question=false}={}){
+  const picture=id=>id?organismPicture(id):'<span class="meal-question" aria-hidden="true">?</span><b>어떤 생물일까요?</b>';
+  return `<div class="feeding-scene ${question?'question-scene':'revealed-scene'}"><div class="feeding-eater"><small>먹는 생물</small><div class="meal-character">${picture(eater)}</div></div><div class="feeding-action" aria-hidden="true">${question?(eater?'무엇을 먹을까요?':'누가 먹을까요?'):'냠냠!'}</div><div class="feeding-food"><small>먹히는 생물 · 먹이</small><div class="meal-plate">${picture(food)}</div></div></div>`;
+}
+function pictureQuizMarkup(puzzle){
+  const {quiz,choice,solved,message}=puzzle;
+  const eater=quiz.mode==='food'?quiz.subject:solved?choice:null;
+  const food=quiz.mode==='hunter'?quiz.subject:solved?choice:null;
+  return `${feedingPictureMarkup(eater,food,{question:!solved})}<p class="picture-choice-title">${solved?'먹고 먹히는 관계를 그림으로 확인했어요!':'빈자리에 들어갈 생물 그림을 눌러요.'}</p><div class="picture-choices" role="group" aria-label="생물 그림 보기">${quiz.choices.map(id=>`<button id="pictureChoice-${id}" class="organism-card ${id===choice?(solved?'answer-correct':'answer-retry'):''}" data-picture-choice="${id}" ${solved?'disabled':''} aria-label="${QUIZ_ORGANISMS[id].name}">${organismPicture(id)}${solved&&id===choice?'<small>✓ 정답</small>':''}</button>`).join('')}</div><p id="quizFeedback" class="quiz-feedback ${solved?'correct':choice?'wrong':''}" role="status" aria-live="polite">${message}</p>`;
 }
 
 // asset-frames.js
@@ -581,6 +565,11 @@ function drawOrganismImage(c,id,x,y,size){
   if((id!=='rice'&&role<0)||!img.complete||!img.naturalWidth)return false;
   const frame=ASSET_FRAMES[id==='rice'?'forest-props-pixel.png':'animals-pixel.png'].frames[id==='rice'?3:role*4],scale=size/Math.max(frame.w,frame.h);
   c.drawImage(img,frame.x,frame.y,frame.w,frame.h,x-frame.w*scale/2,y-frame.h*scale/2,frame.w*scale,frame.h*scale);return true;
+}
+function drawForestProp(c,cell,x,y,size){
+  if(!props.complete||!props.naturalWidth)return;
+  const f=ASSET_FRAMES['forest-props-pixel.png'].frames[cell],scale=size/Math.max(f.w,f.h);
+  c.drawImage(props,f.x,f.y,f.w,f.h,x-f.w*scale/2,y-f.h*scale/2,f.w*scale,f.h*scale);
 }
 const box=(c,x,y,w,h,r=12)=>{c.beginPath();c.roundRect(x,y,w,h,r);};
 const DECOR=[];
@@ -691,9 +680,9 @@ class SoloSession{
     if(!record){record={round:w.round,role:this.me.role,...mission,quizCorrect:false};this.records.push(record);}
     return record;
   }
-  answer(order){
-    if(this.world.phase!=='between'||!isCorrect(this.me.role,order))return false;
-    const record=this.recordRound();record.quizCorrect=true;record.quizOrder=[...order];return true;
+  answer(choice){
+    if(this.world.phase!=='between'||!isCorrect(this.me.role,choice))return false;
+    const record=this.recordRound();record.quizCorrect=true;record.quizChoice=choice;record.quizOrder=[...quizForRole(this.me.role).chain];return true;
   }
   next(){
     if(this.world.phase!=='between'||!this.recordRound().quizCorrect)return false;
@@ -869,11 +858,112 @@ class LearnerSound {
   }
 }
 
+// web-hunt.js
+const HUNT_WIDTH=1100,HUNT_HEIGHT=680;
+const HUNT_ROLES=['sparrow','mouse','snake','hawk'];
+const huntClamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+const huntDistance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const huntTurn=(angle,target,max)=>angle+huntClamp(Math.atan2(Math.sin(target-angle),Math.cos(target-angle)),-max,max);
+
+class WebHunt{
+  constructor(diet,random=Math.random){
+    this.diet=diet.map(edge=>[...edge]);this.random=random;this.level=0;this.t=0;this.serial=0;this.events=[];this.records=[];this.actorSerial=0;this.lastAction=0;
+    this.loadLevel();
+  }
+  get role(){return HUNT_ROLES[this.level];}
+  get foods(){return this.diet.filter(([,eater])=>eater===this.role).map(([food])=>food);}
+  get remainingFoods(){return this.foods.filter(id=>!this.found.has(id));}
+  canEat(food,eater){return this.diet.some(([a,b])=>a===food&&b===eater);}
+  emit(type,extra={}){this.events.push({id:++this.serial,type,at:this.t,...extra});this.events=this.events.slice(-30);}
+  makeActor(kind,x,y){
+    return {uid:++this.actorSerial,kind,x,y,px:x,py:y,angle:this.random()*Math.PI*2,wander:this.random()*2,respawn:0,protect:0,vx:0,vy:0};
+  }
+  loadLevel(){
+    this.phase='playing';this.lastAction=0;this.found=new Set();this.me=this.makeActor(this.role,550,340);this.me.protect=4;
+    this.me.angle=0;this.cool=0;this.dash=0;this.actors=[];this.levelStarted=this.t;
+    const foods=this.foods;
+    foods.forEach((kind,index)=>{
+      const count=kind==='rice'?5:6;
+      for(let i=0;i<count;i++){
+        const near=i===0,angle=-1.1+index*1.1;
+        const x=near?550+Math.cos(angle)*(135+index*30):65+this.random()*(HUNT_WIDTH-130);
+        const y=near?340+Math.sin(angle)*(135+index*30):75+this.random()*(HUNT_HEIGHT-150);
+        this.actors.push(this.makeActor(kind,x,y));
+      }
+    });
+    const enemies=this.diet.filter(([food])=>food===this.role).map(([,eater])=>eater);
+    for(const [i,kind] of [...new Set(enemies)].entries())this.actors.push(this.makeActor(kind,i%2?1000:85,i%2?580:95));
+  }
+  next(){
+    if(this.phase!=='roundEnd')return false;
+    if(this.level===HUNT_ROLES.length-1){this.phase='done';return true;}
+    this.level++;this.loadLevel();return true;
+  }
+  pause(){if(this.phase!=='playing')return false;this.phase='paused';return true;}
+  resume(){if(this.phase!=='paused')return false;this.phase='playing';return true;}
+  _move(actor,vx,vy,dt){
+    actor.x=huntClamp(actor.x+vx*dt,35,HUNT_WIDTH-35);actor.y=huntClamp(actor.y+vy*dt,42,HUNT_HEIGHT-42);
+  }
+  _respawn(actor){
+    // Keep new targets away from the learner and reset interpolation together.
+    let x,y;
+    for(let i=0;i<20;i++){x=60+this.random()*(HUNT_WIDTH-120);y=65+this.random()*(HUNT_HEIGHT-130);if(Math.hypot(x-this.me.x,y-this.me.y)>220)break;}
+    actor.x=actor.px=x;actor.y=actor.py=y;actor.respawn=0;actor.protect=1;
+  }
+  step(input={},dt=1/60){
+    if(this.phase!=='playing'||!Number.isFinite(dt)||dt<=0)return;
+    dt=Math.min(dt,.05);this.t+=dt;const me=this.me;
+    for(const actor of [me,...this.actors]){actor.px=actor.x;actor.py=actor.y;actor.protect=Math.max(0,actor.protect-dt);}
+    this.cool=Math.max(0,this.cool-dt);this.dash=Math.max(0,this.dash-dt);
+    if(me.respawn>0){
+      me.respawn=Math.max(0,me.respawn-dt);
+      if(me.respawn===0){me.x=me.px=550;me.y=me.py=340;me.protect=3;me.vx=me.vy=0;this.emit('respawn');}
+    }else{
+      let x=Number.isFinite(input.x)?input.x:0,y=Number.isFinite(input.y)?input.y:0;
+      const length=Math.max(1,Math.hypot(x,y));x/=length;y/=length;
+      if(Number.isInteger(input.action)&&input.action>this.lastAction){
+        this.lastAction=input.action;
+        if(this.cool===0){this.dash=.45;this.cool=3.5;this.emit('dash');}
+      }
+      if(Math.hypot(x,y)>.05)me.angle=Math.atan2(y,x);
+      if(this.dash>0&&Math.hypot(x,y)<.05){x=Math.cos(me.angle);y=Math.sin(me.angle);}
+      const speed=this.dash>0?360:218,blend=1-Math.exp(-dt*17);
+      me.vx+=(x*speed-me.vx)*blend;me.vy+=(y*speed-me.vy)*blend;
+      this._move(me,me.vx,me.vy,dt);
+    }
+    for(const actor of this.actors){
+      if(actor.respawn>0){actor.respawn=Math.max(0,actor.respawn-dt);if(actor.respawn===0)this._respawn(actor);continue;}
+      if(actor.kind==='rice')continue;
+      actor.wander-=dt;const distance=huntDistance(actor,me),isFood=this.canEat(actor.kind,this.role),isEnemy=this.canEat(this.role,actor.kind);
+      if(isFood&&distance<165&&me.respawn<=0)actor.targetAngle=Math.atan2(actor.y-me.y,actor.x-me.x);
+      else if(isEnemy&&distance<200&&me.respawn<=0&&me.protect===0)actor.targetAngle=Math.atan2(me.y-actor.y,me.x-actor.x);
+      else if(actor.wander<=0||actor.targetAngle===undefined){actor.targetAngle=actor.angle+(this.random()-.5)*1.6;actor.wander=1.3+this.random()*1.7;}
+      if(actor.x<60)actor.targetAngle=0;if(actor.x>HUNT_WIDTH-60)actor.targetAngle=Math.PI;
+      if(actor.y<65)actor.targetAngle=Math.PI/2;if(actor.y>HUNT_HEIGHT-65)actor.targetAngle=-Math.PI/2;
+      actor.angle=huntTurn(actor.angle,actor.targetAngle,2.7*dt);
+      const speed=isEnemy?98:actor.kind==='sparrow'?116:actor.kind==='mouse'?110:98;
+      actor.vx=Math.cos(actor.angle)*speed;actor.vy=Math.sin(actor.angle)*speed;this._move(actor,actor.vx,actor.vy,dt);
+    }
+    if(me.respawn>0)return;
+    for(const actor of this.actors){
+      if(actor.respawn>0||huntDistance(me,actor)>35)continue;
+      if(this.canEat(actor.kind,this.role)){
+        actor.respawn=2.3;this.found.add(actor.kind);this.emit('eat',{food:actor.kind,eater:this.role});
+        if(this.remainingFoods.length===0){
+          this.phase='roundEnd';this.records.push({role:this.role,foods:[...this.found],elapsed:this.t-this.levelStarted});this.emit('roundDone');break;
+        }
+      }else if(me.protect===0&&actor.protect===0&&this.canEat(this.role,actor.kind)){
+        me.respawn=2;me.vx=me.vy=0;this.dash=0;this.emit('caught',{food:this.role,eater:actor.kind});break;
+      }
+    }
+  }
+}
+
 // food-web.js
 
 const WEB_ORGANISMS={...QUIZ_ORGANISMS,mouse:{name:'생쥐'},sparrow:{name:'참새'}};
 const WEB_POSITIONS={rice:[80,280],grasshopper:[300,125],mouse:[300,435],frog:[520,125],sparrow:[520,435],snake:[740,125],hawk:[900,280]};
-const WEB_STAGES=['intro','connect','observe','reflect','complete'];
+const WEB_STAGES=['intro','play','observe','reflect','complete'];
 const chainToEdges=chain=>chain.slice(0,-1).map((food,i)=>[food,chain[i+1]]);
 const WEB_BASE_EDGES=chainToEdges(QUIZZES[3].chain);
 // A small set of example relations, rather than a list of every possible diet.
@@ -895,46 +985,33 @@ function webEdgeGeometry(food,eater){
 }
 class FoodWebActivity{
   constructor(){
-    this.stage='intro';this.edges=WEB_BASE_EDGES.map(edge=>[...edge]);this.history=[];
+    this.stage='intro';this.edges=WEB_BASE_EDGES.map(edge=>[...edge]);this.hunt=null;this.lastHuntEvent=0;
     this.selected=null;this.inspected=null;this.highlightPath=null;this.buildChecked=false;
-    this.removed=null;this.observed=false;this.alternatives=new Set();this.reflection='';
-    this.feedback='';
+    this.removed=null;this.observed=false;this.alternatives=new Set();this.reflection='';this.feedback='';
   }
   get complete(){return WEB_EDGES.every(([food,eater])=>this.hasEdge(food,eater));}
   get remaining(){return WEB_EDGES.length-this.edges.length;}
   hasEdge(food,eater){return this.edges.some(([a,b])=>a===food&&b===eater);}
-  begin(){if(this.stage!=='intro')return false;this.stage='connect';this.feedback='먹히는 생물을 먼저, 그것을 먹는 생물을 다음에 눌러요.';return true;}
-  select(id){
-    if(this.stage!=='connect'||!WEB_ORGANISMS[id])return 'ignored';
-    if(this.selected===id){this.selected=null;this.feedback='선택을 취소했어요. 먹히는 생물부터 다시 눌러요.';return 'cancelled';}
-    if(!this.selected){this.selected=id;this.feedback=`${webName(id)}에서 출발해요. 이것을 먹는 생물을 눌러요.`;return 'selected';}
-    const food=this.selected;this.selected=null;
-    if(this.hasEdge(food,id)){this.feedback='이미 이어진 관계예요. 한 생물을 여러 생물과 연결할 수도 있어요.';return 'exists';}
-    if(!isWebEdge(food,id)){
-      this.feedback=isWebEdge(id,food)?'화살표 방향을 바꿔 볼까요? 먹히는 생물 → 먹는 생물 순서예요.':'이 활동의 단서에는 없는 연결이에요. 단서 카드를 보고 관계를 찾아보세요.';
-      return isWebEdge(id,food)?'reversed':'outside';
+  begin(){if(this.stage!=='intro')return false;this.stage='play';this.hunt=new WebHunt(WEB_EDGES);return true;}
+  learn(food,eater){
+    if(!isWebEdge(food,eater)||this.hasEdge(food,eater))return false;
+    this.edges.push([food,eater]);return true;
+  }
+  tick(input,dt){
+    if(this.stage!=='play')return;
+    this.hunt.step(input,dt);
+    for(const event of this.hunt.events)if(event.id>this.lastHuntEvent&&(event.type==='eat'||event.type==='caught'))this.learn(event.food,event.eater);
+    this.lastHuntEvent=this.hunt.serial;
+  }
+  pause(){return this.stage==='play'&&this.hunt.pause();}
+  resume(){return this.stage==='play'&&this.hunt.resume();}
+  advanceHunt(){
+    if(this.stage!=='play'||!this.hunt.next())return false;
+    if(this.hunt.phase==='done'){
+      if(!this.complete)throw new Error('먹이관계 기록을 확인해 주세요.');
+      this.stage='observe';this.buildChecked=true;this.feedback='게임에서 만난 관계가 먹이그물에 모였어요. 개구리를 가려 다른 먹이도 찾아봐요.';
     }
-    this.edges.push([food,id]);this.history.push([food,id]);this.buildChecked=false;
-    this.feedback=`${webName(food)} → ${webName(id)} 연결을 더했어요. ${this.remaining?`단서의 관계 ${this.remaining}개를 더 찾아요.`:'이제 먹이그물 확인하기를 눌러요!'}`;
-    return 'added';
-  }
-  remove(food,eater){
-    if(this.stage!=='connect'||isBaseEdge(food,eater)||!this.hasEdge(food,eater))return false;
-    this.edges=this.edges.filter(([a,b])=>a!==food||b!==eater);
-    this.history=this.history.filter(([a,b])=>a!==food||b!==eater);
-    this.selected=null;this.buildChecked=false;this.feedback='새로 만든 연결을 지웠어요. 다시 이어 볼 수 있어요.';return true;
-  }
-  undo(){const edge=this.history.at(-1);return edge?this.remove(...edge):false;}
-  reset(){
-    if(this.stage!=='connect')return false;
-    this.edges=WEB_BASE_EDGES.map(edge=>[...edge]);this.history=[];this.selected=null;this.buildChecked=false;
-    this.feedback='가져온 먹이사슬은 남기고 새로 만든 연결만 지웠어요.';return true;
-  }
-  check(){
-    if(this.stage!=='connect')return false;
-    this.selected=null;this.buildChecked=this.complete;
-    this.feedback=this.complete?'먹이그물 완성! 한 생물에 여러 화살표가 이어졌어요. 다음 단계에서 남아 있는 먹이를 살펴봐요.':`단서의 관계가 ${this.remaining}개 남았어요. 생쥐와 참새의 단서를 다시 읽어 보세요.`;
-    return this.buildChecked;
+    return true;
   }
   toggleFrog(){
     if(this.stage!=='observe')return false;
@@ -946,7 +1023,7 @@ class FoodWebActivity{
   answerAlternative(id){
     if(this.stage!=='observe'||!this.observed||this.removed!=='frog')return false;
     if(this.hasEdge(id,'snake')&&id!=='frog'){
-      this.alternatives.add(id);this.feedback=`${webName(id)} → 뱀 관계가 남아 있어요. ${this.alternatives.size===2?'두 가지 먹이를 모두 찾았어요!':'또 다른 먹이도 찾아볼까요?'}`;return true;
+      this.alternatives.add(id);this.feedback=`뱀이 ${webName(id)}도 먹을 수 있어요. ${this.alternatives.size===2?'두 가지 먹이를 모두 찾았어요!':'또 다른 먹이도 찾아볼까요?'}`;return true;
     }
     this.feedback='지금 보이는 먹이그물에서 뱀 쪽으로 오는 화살표를 따라가 보세요.';return false;
   }
@@ -954,8 +1031,7 @@ class FoodWebActivity{
   showPath(index){if(!this.complete||!Number.isInteger(index)||!WEB_PATHS[index])return false;this.highlightPath=this.highlightPath===index?null:index;this.inspected=null;return true;}
   setReflection(text){this.reflection=String(text).slice(0,180);}
   next(){
-    if(this.stage==='connect'&&this.complete&&this.buildChecked){this.stage='observe';this.feedback='개구리 가려보기를 눌러 연결이 어떻게 달라지는지 살펴봐요.';}
-    else if(this.stage==='observe'&&this.observed&&this.alternatives.size===2){this.stage='reflect';this.removed=null;this.inspected=null;this.highlightPath=null;this.feedback='';}
+    if(this.stage==='observe'&&this.observed&&this.alternatives.size===2){this.stage='reflect';this.removed=null;this.inspected=null;this.highlightPath=null;this.feedback='';}
     else if(this.stage==='reflect'&&this.reflection.trim()){this.stage='complete';this.reflection=this.reflection.trim();this.feedback='';}
     else return false;
     return true;
@@ -983,6 +1059,10 @@ function drawWebPicture(c,id,x,y,size){
   c.drawImage(img,x-size/2,y-size/2,size,size);return true;
 }
 
+function webMealCard(eater,food){
+  return `<div class="web-meal-card"><div><small>먹는 생물</small>${webPicture(eater)}</div><b class="meal-word">먹어요</b><div><small>먹이</small>${webPicture(food)}</div></div>`;
+}
+
 // web-view.js
 
 const webEscape=text=>String(text).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -1008,27 +1088,147 @@ function webInspector(activity){
   const {food,eaters}=activity.neighbors(activity.inspected),name=webName(activity.inspected);
   return `<div class="web-inspector"><b>${name}의 남아 있는 관계</b><span>먹이: ${food.length?food.map(webName).join(', '):'이 그림에 표시된 먹이가 없어요.'}</span><span>이 생물을 먹는 생물: ${eaters.length?eaters.map(webName).join(', '):'이 그림에 표시된 생물이 없어요.'}</span></div>`;
 }
-function webConnectionList(activity){
-  return `<details id="webConnections" class="web-connections"><summary>연결한 관계 ${activity.edges.length}개 살펴보기·수정</summary><div>${activity.edges.map(([a,b])=>isBaseEdge(a,b)?`<span class="web-edge-chip base">${webName(a)} → ${webName(b)} <small>가져온 관계</small></span>`:`<button data-web-remove="${a},${b}" aria-label="${webName(a)}에서 ${webName(b)} 연결 지우기">${webName(a)} → ${webName(b)} <span aria-hidden="true">×</span></button>`).join('')}</div></details>`;
-}
 function webPathChoices(activity){
   if(!activity.complete)return '';
-  return `<details id="webPaths" class="web-paths"><summary>이 먹이그물 안에서 다른 먹이사슬 찾기</summary><div>${WEB_PATHS.map((path,i)=>`<button data-web-path="${i}" aria-pressed="${activity.highlightPath===i}">${path.map(webName).join(' → ')}</button>`).join('')}</div></details>`;
+  return `<details id="webPaths" class="web-paths"><summary>이 먹이그물 안에서 다른 먹이사슬 찾기</summary><div>${WEB_PATHS.map((path,i)=>`<button data-web-path="${i}" aria-pressed="${activity.highlightPath===i}">${path.map(id=>'<span class="path-picture">'+webPicture(id)+'</span>').join('<span class="path-join" aria-hidden="true">›</span>')}</button>`).join('')}</div></details>`;
 }
 function foodWebMarkup(activity,hasGameRecords){
   const stage=activity.stage,step=WEB_STAGES.indexOf(stage),feedback=`<p id="webFeedback" class="web-feedback" role="status" aria-live="polite">${activity.feedback}</p>`;
-  const title={intro:'먹이사슬들이 만나면?',connect:'화살표를 더해 먹이그물 만들기',observe:'개구리가 없다면, 뱀의 먹이는?',reflect:'연결한 그림을 근거로 말해요',complete:'여러 먹이사슬이 얽힌 먹이그물!'}[stage];
+  const title={intro:'먹이사슬들이 만나면?',play:'여러 먹이를 찾아 먹이그물 완성!' ,observe:'개구리가 없다면, 뱀의 먹이는?',reflect:'연결한 그림을 근거로 말해요',complete:'여러 먹이사슬이 얽힌 먹이그물!'}[stage];
   let body='';
   if(stage==='intro'){
-    body=`<p class="web-intro-copy">먹이사슬 탐험에서 만난 한 줄 먹이사슬을 가져왔어요.<br>자연에서는 한 생물이 여러 먹이를 먹거나 여러 생물에게 먹히기도 해요.</p>${chainSequenceMarkup(QUIZZES[3].chain,5,{solved:true})}<div class="web-new-friends"><div>${webPicture('mouse')}</div><div>${webPicture('sparrow')}</div><p>생쥐와 참새도 함께 살아요.<br>원래 먹이사슬에 새로운 관계를 더해 볼까요?</p></div><button id="beginWeb" class="primary wide">먹이사슬에서 먹이그물로 출발!</button>`;
+    body=`<p class="web-intro-copy">먹이사슬 탐험에서 만난 한 줄 먹이사슬을 가져왔어요.<br>자연에서는 한 생물이 여러 먹이를 먹거나 여러 생물에게 먹히기도 해요.</p>${chainSequenceMarkup(QUIZZES[3].chain,5,{solved:true})}<div class="web-new-friends"><div>${webPicture('mouse')}</div><div>${webPicture('sparrow')}</div><p>생쥐와 참새도 함께 살아요.<br>동물을 직접 움직여 여러 먹이를 찾아봐요.</p></div><button id="beginWeb" class="primary wide">먹이그물 숲 게임 시작하기!</button>`;
   }else{
     const board=webBoardMarkup(activity);
-    if(stage==='connect')body=`<p class="web-instruction"><b>먹히는 생물</b>을 먼저, <b>먹는 생물</b>을 다음에 눌러요. 같은 생물에서 화살표를 여러 개 만들 수 있어요.</p><div class="web-progress"><b>단서의 먹이관계 ${activity.edges.length} / 10개</b><span>초록: 가져온 먹이사슬 · 갈색: 새 연결</span></div><div class="web-hints"><p><b>생쥐 단서</b> 벼의 낟알을 먹어요. 뱀의 먹이가 될 수 있어요.</p><p><b>참새 단서</b> 벼의 낟알과 메뚜기를 먹어요. 뱀과 매의 먹이가 될 수 있어요.</p></div>${board}${feedback}<div class="web-tools"><button id="webUndo" ${activity.history.length?'':'disabled'}>새 연결 하나 되돌리기</button><button id="webReset" ${activity.history.length?'':'disabled'}>새 연결만 지우기</button><button id="webCheck" class="primary">먹이그물 확인하기</button></div>${webConnectionList(activity)}${activity.buildChecked?'<button id="webNext" class="primary wide">이제 남아 있는 먹이 살펴보기 →</button>':''}`;
+    if(stage==='play')body=webHuntMarkup(activity);
     if(stage==='observe')body=`<p class="web-instruction">개구리를 잠시 가리고, 뱀에게 오는 다른 화살표를 찾아요. 생물 그림을 누르면 그 생물과 연결된 관계가 강조돼요.</p><div class="web-observe-toggle"><button id="toggleFrog" class="secondary" aria-pressed="${activity.removed==='frog'}">${activity.removed?'개구리 다시 보이기':'개구리 가려보기'}</button><span>가려지는 생물과 직접 이어진 화살표만 흐려져요.</span></div>${board}${webInspector(activity)}${feedback}${activity.observed?`<div class="web-alternative"><h3>개구리 대신, 뱀에게 남은 먹이 두 가지를 골라요.</h3><div>${['mouse','sparrow','grasshopper','rice'].map(id=>`<button class="organism-card ${activity.alternatives.has(id)?'found':''}" data-web-alternative="${id}" ${activity.alternatives.has(id)||!activity.removed?'disabled':''} aria-label="${webName(id)}${activity.alternatives.has(id)?', 찾았어요':''}">${webPicture(id)}${activity.alternatives.has(id)?'<small>✓ 찾았어요</small>':''}</button>`).join('')}</div><p>${activity.alternatives.size} / 2가지 찾음</p></div>`:''}${webPathChoices(activity)}<button id="webNext" class="primary wide" ${activity.observed&&activity.alternatives.size===2?'':'disabled'}>내 생각 정리하기 →</button>`;
-    if(stage==='reflect')body=`${board}<div class="web-evidence"><b>우리가 그림에서 찾은 근거</b><p>개구리를 가려도 <strong>생쥐 → 뱀</strong>, <strong>참새 → 뱀</strong> 연결이 남아 있었어요.</p></div><label class="web-reflection-label" for="webReflection">먹이사슬과 먹이그물은 어떻게 다른가요?<small>찾아본 먹이관계 한 가지를 근거로 내 생각을 적어 보세요.</small></label><textarea id="webReflection" maxlength="180" rows="3" placeholder="먹이사슬은 ___, 먹이그물은 ___였어요. 예를 들어 ___가 없을 때도 ___ → ___ 관계가 남아 있었어요.">${webEscape(activity.reflection)}</textarea><p id="webWritingCount" class="web-writing-note">${activity.reflection.length} / 180자 · 쓴 내용은 이 기기 안에만 남아요.</p><button id="webNext" class="primary wide" ${activity.reflection.trim()?'':'disabled'}>먹이그물 탐험 마치기</button>`;
-    if(stage==='complete')body=`<p class="web-intro-copy">7종류 생물의 먹이관계 10개를 연결하고, 다른 먹이 두 가지도 찾았어요.</p>${board}${webInspector(activity)}<div class="web-definition"><b>먹이그물</b><p>여러 개의 먹이사슬이 서로 얽혀 그물처럼 연결된 관계예요.<br>한 종류의 먹이가 없어도 다른 먹이를 먹을 수 있지만, 변화의 영향이 사라지는 것은 아니에요.</p></div><div class="web-my-thought"><b>나의 생각</b><p>${webEscape(activity.reflection)}</p></div>${webPathChoices(activity)}<button id="saveWeb" class="primary wide">내 먹이그물과 생각을 그림으로 저장</button><p id="webSaveStatus" class="web-save-status" role="status"></p>`;
+    if(stage==='reflect')body=`${board}<div class="web-evidence"><b>우리가 그림에서 찾은 근거</b><p>게임에서 뱀이 먹었던 다른 먹이도 남아 있어요.</p><div class="evidence-meals">${webMealCard('snake','mouse')}${webMealCard('snake','sparrow')}</div></div><label class="web-reflection-label" for="webReflection">먹이사슬과 먹이그물은 어떻게 다른가요?<small>찾아본 먹이관계 한 가지를 근거로 내 생각을 적어 보세요.</small></label><textarea id="webReflection" maxlength="180" rows="3" placeholder="먹이그물에서는 한 동물이 여러 먹이를 먹었어요. 예를 들어 개구리가 없을 때도 뱀은 ___를 먹을 수 있었어요.">${webEscape(activity.reflection)}</textarea><p id="webWritingCount" class="web-writing-note">${activity.reflection.length} / 180자 · 쓴 내용은 이 기기 안에만 남아요.</p><button id="webNext" class="primary wide" ${activity.reflection.trim()?'':'disabled'}>먹이그물 탐험 마치기</button>`;
+    if(stage==='complete')body=`<p class="web-intro-copy">숲 게임으로 7종류 생물의 먹이관계 10개를 모으고, 다른 먹이 두 가지도 찾았어요.</p>${board}${webInspector(activity)}<div class="web-definition"><b>먹이그물</b><p>여러 개의 먹이사슬이 서로 얽혀 그물처럼 연결된 관계예요.<br>한 종류의 먹이가 없어도 다른 먹이를 먹을 수 있지만, 변화의 영향이 사라지는 것은 아니에요.</p></div><div class="web-my-thought"><b>나의 생각</b><p>${webEscape(activity.reflection)}</p></div>${webPathChoices(activity)}<button id="saveWeb" class="primary wide">내 먹이그물과 생각을 그림으로 저장</button><p id="webSaveStatus" class="web-save-status" role="status"></p>`;
   }
-  return `<div class="web-page-header"><span class="eyebrow">먹이사슬에서 먹이그물로</span><h2>${title}</h2><ol class="web-steps" aria-label="활동 순서">${['사슬 가져오기','그물 만들기','변화 살피기','내 생각','완료'].map((name,i)=>`<li class="${i===step?'current':i<step?'done':''}" ${i===step?'aria-current="step"':''}>${i+1} ${name}</li>`).join('')}</ol></div>${body}<p class="web-model-note">학습을 위해 대표 먹이관계를 단순화한 그림이에요. 이 그림에 없는 관계도 있고, 종류와 계절에 따라 먹이는 달라질 수 있어요.</p><button id="webBack" class="secondary wide">${hasGameRecords?'먹이사슬 탐험 기록으로 돌아가기':'처음 화면으로 돌아가기'}</button>`;
+  if(stage==='play')return body;
+  return `<div class="web-page-header"><span class="eyebrow">먹이사슬에서 먹이그물로</span><h2>${title}</h2><ol class="web-steps" aria-label="활동 순서">${['사슬 가져오기','숲 게임','변화 살피기','내 생각','완료'].map((name,i)=>`<li class="${i===step?'current':i<step?'done':''}" ${i===step?'aria-current="step"':''}>${i+1} ${name}</li>`).join('')}</ol></div>${body}<p class="web-model-note">학습을 위해 대표 먹이관계를 단순화한 그림이에요. 이 그림에 없는 관계도 있고, 종류와 계절에 따라 먹이는 달라질 수 있어요.</p><button id="webBack" class="secondary wide">${hasGameRecords?'먹이사슬 탐험 기록으로 돌아가기':'처음 화면으로 돌아가기'}</button>`;
+}
+
+function webHuntMarkup(activity){
+  const hunt=activity.hunt;
+  return `<div class="hunt-topbar"><div><b>먹이그물 숲 게임</b><span id="huntRoleLabel">${webName(hunt.role)} · ${hunt.level+1} / 4</span></div><div><button id="huntBook">먹이 그림 기록</button><button id="huntPause">잠깐 멈춤</button><button id="webBack">나가기</button></div></div><div class="hunt-arena"><canvas id="webHuntField" aria-label="먹이그물 숲. 빈 곳을 누르거나 조작판으로 동물을 움직여 먹이를 찾아요."></canvas><aside class="hunt-goals"><div class="hunt-role-picture">${webPicture(hunt.role)}<span>내가 맡은 동물</span></div><div><b>서로 다른 먹이를 모두 찾아요</b><div class="hunt-food-pictures">${hunt.foods.map(id=>`<div id="huntGoal-${id}" class="hunt-goal">${webPicture(id)}<small id="huntFound-${id}">찾아 먹기</small></div>`).join('')}</div></div></aside><div id="huntLearned" class="hunt-learned">발견한 관계 ${activity.edges.length} / 10</div><div class="hunt-mobile-controls"><div id="huntJoystick" class="joystick" aria-label="먹이그물 게임 이동 조작판"><span id="huntStick"></span><small>이동</small></div><button id="huntDash" class="hunt-dash">빠르게 이동<small id="huntCooldown">준비 완료</small></button></div><div id="huntMealToast" class="hunt-meal-toast" hidden></div><div id="huntRespawn" class="hunt-respawn" hidden></div><section id="huntPaused" class="hunt-modal" hidden><div><h3>잠깐 쉬어 가요</h3><p>먹이 그림을 보고 다시 찾아볼까요?</p><button id="huntResume" class="primary wide">계속 탐험하기</button></div></section><section id="huntRoundDone" class="hunt-modal" hidden><div><span class="eyebrow">여러 먹이 찾기 성공!</span><h3>${webName(hunt.role)}의 먹이를 모두 만났어요</h3><div id="huntRoundMeals"></div><button id="huntAdvance" class="primary wide">${hunt.level===3?'완성한 먹이그물 살펴보기':'다음 동물로 탐험하기'}</button></div></section><section id="huntNotebook" class="hunt-modal" hidden><div class="hunt-notebook-card"><h3>내가 만난 먹이관계</h3><div id="huntNotebookMeals"></div><button id="closeHuntBook" class="primary wide">게임으로 돌아가기</button></div></section></div><p class="hunt-control-note">방향키·WASD / 이동 조작판 / 빈 곳 누르기 · 먹이에 가까이 가면 자동으로 먹어요. 잡혀도 찾은 먹이는 유지돼요.</p>`;
+}
+
+// web-hunt-view.js
+
+class WebHuntGame{
+  constructor(canvas,activity,{audio,onAdvance,onUpdate}={}){
+    this.canvas=canvas;this.c=canvas.getContext('2d');this.activity=activity;this.audio=audio;
+    this.onAdvance=onAdvance;this.onUpdate=onUpdate;this.keys=new Set();this.joy={x:0,y:0};
+    this.target=null;this.action=0;this.accumulator=0;this.lastSound=activity.hunt.serial;this.lastHUD=0;this.lastPhase=activity.hunt.phase;
+    this.camera={x:0,y:0};this.facing=new Map();this.bookResume=false;
+    const get=id=>document.getElementById(id);this.get=get;
+    this.observer=new ResizeObserver(()=>this.fit());this.observer.observe(canvas);this.fit();
+    this.onKey=e=>{
+      if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||get('helpDialog').open||get('soundDialog').open||!get('huntNotebook').hidden)return;
+      const key=e.key.startsWith('Arrow')?e.key:e.key.toLowerCase();
+      if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(key)){
+        if(key===' '&&document.activeElement?.tagName==='BUTTON')return;
+        e.preventDefault();if(key===' '&&!e.repeat)this.action++;else this.keys.add(key);
+      }else if(['w','a','s','d'].includes(key))this.keys.add(key);
+    };
+    this.onKeyUp=e=>this.keys.delete(e.key.startsWith('Arrow')?e.key:e.key.toLowerCase());
+    document.addEventListener('keydown',this.onKey);document.addEventListener('keyup',this.onKeyUp);
+    canvas.onpointerdown=e=>{
+      if(activity.hunt.phase!=='playing')return;e.preventDefault();const r=canvas.getBoundingClientRect();
+      this.target={x:this.camera.x+(e.clientX-r.left)/this.scale,y:this.camera.y+(e.clientY-r.top)/this.scale};
+    };
+    const joystick=get('huntJoystick');
+    const move=e=>{
+      const r=joystick.getBoundingClientRect(),max=r.width*.3,dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,len=Math.max(max,Math.hypot(dx,dy));
+      this.joy.x=dx/len;this.joy.y=dy/len;this.target=null;get('huntStick').style.transform=`translate(${this.joy.x*max}px,${this.joy.y*max}px)`;
+    };
+    joystick.onpointerdown=e=>{if(activity.hunt.phase!=='playing')return;e.preventDefault();this.pointer=e.pointerId;joystick.setPointerCapture(this.pointer);move(e);};
+    joystick.onpointermove=e=>{if(e.pointerId===this.pointer)move(e);};
+    joystick.onpointerup=joystick.onpointercancel=joystick.onlostpointercapture=()=>this.clearInput();
+    get('huntDash').onpointerdown=e=>{e.preventDefault();this.action++;};
+    get('huntDash').onclick=e=>{if(e.detail===0)this.action++;};
+    get('huntPause').onclick=()=>{if(!activity.pause()){audio?.unlock();activity.resume();}this.clearInput();this.onUpdate?.();};
+    get('huntResume').onclick=()=>{audio?.unlock();activity.resume();this.clearInput();this.onUpdate?.();};
+    get('huntAdvance').onclick=()=>{audio?.unlock();if(activity.advanceHunt())this.onAdvance?.();};
+    get('huntBook').onclick=()=>{
+      this.bookResume=activity.pause();this.clearInput();get('huntNotebookMeals').innerHTML=activity.edges.map(([food,eater])=>webMealCard(eater,food)).join('');get('huntNotebook').hidden=false;this.onUpdate?.();
+    };
+    get('closeHuntBook').onclick=()=>{get('huntNotebook').hidden=true;if(this.bookResume)activity.resume();this.bookResume=false;this.onUpdate?.();};
+  }
+  clearInput(){this.keys.clear();this.joy.x=this.joy.y=0;this.pointer=null;this.target=null;if(this.get('huntStick'))this.get('huntStick').style.transform='';}
+  backgroundPause(){this.activity.pause();this.bookResume=false;this.clearInput();}
+  dispose(){
+    this.observer.disconnect();document.removeEventListener('keydown',this.onKey);document.removeEventListener('keyup',this.onKeyUp);this.clearInput();this.canvas.onpointerdown=null;
+  }
+  fit(){
+    const r=this.canvas.getBoundingClientRect();this.width=Math.max(1,r.width);this.height=Math.max(1,r.height);this.dpr=Math.min(globalThis.devicePixelRatio||1,1.6);
+    this.canvas.width=Math.round(this.width*this.dpr);this.canvas.height=Math.round(this.height*this.dpr);this.scale=Math.max(this.width/HUNT_WIDTH,this.height/HUNT_HEIGHT);
+    this.c.imageSmoothingEnabled=false;
+    const me=this.activity.hunt.me;this.camera.x=Math.max(0,Math.min(HUNT_WIDTH-this.width/this.scale,me.x-this.width/this.scale/2));this.camera.y=Math.max(0,Math.min(HUNT_HEIGHT-this.height/this.scale,me.y-this.height/this.scale/2));
+  }
+  input(){
+    let x=this.joy.x+(this.keys.has('ArrowRight')||this.keys.has('d')?1:0)-(this.keys.has('ArrowLeft')||this.keys.has('a')?1:0);
+    let y=this.joy.y+(this.keys.has('ArrowDown')||this.keys.has('s')?1:0)-(this.keys.has('ArrowUp')||this.keys.has('w')?1:0);
+    if(Math.hypot(x,y)>.05)this.target=null;
+    else if(this.target){const me=this.activity.hunt.me,dx=this.target.x-me.x,dy=this.target.y-me.y,d=Math.hypot(dx,dy);if(d>11){x=dx/d;y=dy/d;}else this.target=null;}
+    const d=Math.max(1,Math.hypot(x,y));return {x:x/d,y:y/d,action:this.action};
+  }
+  frame(elapsed,now){
+    const hunt=this.activity.hunt;
+    if(hunt.phase==='playing'){
+      this.accumulator+=Math.min(.1,elapsed);
+      while(this.accumulator>=1/60&&hunt.phase==='playing'){this.activity.tick(this.input(),1/60);this.accumulator-=1/60;}
+    }else this.accumulator=0;
+    if(hunt.phase!==this.lastPhase){this.lastPhase=hunt.phase;this.onUpdate?.();}
+    for(const event of hunt.events)if(event.id>this.lastSound){
+      if(event.type==='eat')this.audio?.effect('eat');if(event.type==='caught')this.audio?.effect('caught');if(event.type==='dash')this.audio?.effect('dive');if(event.type==='roundDone')this.audio?.effect('mission');
+      if(event.type==='eat'||event.type==='caught')this.meal=event;
+    }
+    this.lastSound=hunt.serial;this.draw(hunt.phase==='playing'?this.accumulator*60:1,elapsed);
+    if(now-this.lastHUD>80){this.lastHUD=now;this.updateHUD();}
+  }
+  updateHUD(){
+    const h=this.activity.hunt,g=this.get;
+    for(const id of h.foods){g('huntGoal-'+id).classList.toggle('found',h.found.has(id));g('huntFound-'+id).textContent=h.found.has(id)?'✓ 먹었어요':'찾아 먹기';}
+    g('huntLearned').textContent=`발견한 관계 ${this.activity.edges.length} / 10`;
+    g('huntCooldown').textContent=h.cool>0?`${h.cool.toFixed(1)}초 뒤`:'준비 완료';
+    g('huntRespawn').hidden=h.me.respawn<=0;if(h.me.respawn>0)g('huntRespawn').textContent=`다시 출발해요! ${h.me.respawn.toFixed(1)}초 뒤`;
+    g('huntPaused').hidden=h.phase!=='paused'||!g('huntNotebook').hidden||g('helpDialog').open||g('soundDialog').open;
+    g('huntPause').textContent=h.phase==='paused'?'계속하기':'잠깐 멈춤';
+    g('huntRoundDone').hidden=h.phase!=='roundEnd';
+    if(h.phase==='roundEnd'&&!this.resultPainted){g('huntRoundMeals').innerHTML=h.foods.map(food=>webMealCard(h.role,food)).join('');this.resultPainted=true;}
+    if(this.meal&&h.t-this.meal.at<1.8){
+      if(this.shownMeal!==this.meal.id){g('huntMealToast').innerHTML=webMealCard(this.meal.eater,this.meal.food);this.shownMeal=this.meal.id;}g('huntMealToast').hidden=false;
+    }else g('huntMealToast').hidden=true;
+  }
+  draw(alpha,elapsed){
+    const h=this.activity.hunt,c=this.c,me=h.me,lerp=a=>({x:a.px+(a.x-a.px)*alpha,y:a.py+(a.y-a.py)*alpha});
+    const p=lerp(me),vw=this.width/this.scale,vh=this.height/this.scale,blend=1-Math.exp(-Math.min(elapsed,.1)*10);
+    this.camera.x+=(Math.max(0,Math.min(HUNT_WIDTH-vw,p.x-vw/2))-this.camera.x)*blend;
+    this.camera.y+=(Math.max(0,Math.min(HUNT_HEIGHT-vh,p.y-vh/2))-this.camera.y)*blend;
+    const pixel=this.scale*this.dpr,camX=Math.round(this.camera.x*pixel)/pixel,camY=Math.round(this.camera.y*pixel)/pixel;
+    c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle='#b4d58e';c.fillRect(0,0,this.width,this.height);
+    c.save();c.scale(this.scale,this.scale);c.translate(-camX,-camY);
+    c.fillStyle='#a6ca7b';for(let x=20;x<HUNT_WIDTH;x+=48)for(let y=25;y<HUNT_HEIGHT;y+=46){c.fillRect(x,y,3,6);c.fillRect(x+4,y+2,3,4);}
+    for(let x=35;x<HUNT_WIDTH;x+=105){drawForestProp(c,0,x,7,105);drawForestProp(c,0,x,HUNT_HEIGHT-6,105);}
+    for(let y=115;y<HUNT_HEIGHT-70;y+=110){drawForestProp(c,0,0,y,105);drawForestProp(c,0,HUNT_WIDTH,y,105);}
+    for(const actor of [...h.actors,me].filter(a=>a.respawn<=0).sort((a,b)=>a.y-b.y)){
+      const pos=lerp(actor),x=Math.round(pos.x*pixel)/pixel,y=Math.round(pos.y*pixel)/pixel,isMe=actor===me,food=h.canEat(actor.kind,h.role),enemy=h.canEat(h.role,actor.kind);
+      c.fillStyle='#527a3a30';c.beginPath();c.ellipse(x,y+17,actor.kind==='rice'?18:23,7,0,0,7);c.fill();
+      if(isMe||food||enemy){c.strokeStyle=isMe?'#fffef2':food?'#ffe59b':'#c9957a';c.lineWidth=isMe?3:2;c.beginPath();c.ellipse(x,y+15,isMe?29:26,10,0,0,7);c.stroke();}
+      if(isMe&&me.protect>0){c.strokeStyle='#fff0a1';c.lineWidth=2;c.setLineDash([5,5]);c.beginPath();c.ellipse(x,y-3,34,39,0,0,7);c.stroke();c.setLineDash([]);}
+      const vx=actor.vx||0;let facing=this.facing.get(actor.uid)||1;if(Math.abs(vx)>20)facing=vx<0?-1:1;this.facing.set(actor.uid,facing);
+      const moving=Math.min(1,Math.hypot(actor.vx||0,actor.vy||0)/130),bob=actor.kind==='snake'?0:Math.sin(h.t*5+actor.uid)*.7*moving;
+      c.save();c.translate(x,y-8-bob);if((actor.kind==='sparrow'&&facing>0)||(actor.kind==='mouse'&&facing<0))c.scale(-1,1);
+      drawWebPicture(c,actor.kind,0,0,isMe?64:actor.kind==='rice'?44:55);c.restore();
+      c.textAlign='center';c.font=`${isMe?'bold ':''}12px system-ui, sans-serif`;c.fillStyle=isMe?'#2d6242':'#46643a';c.fillText((isMe?'나 · ':'')+webName(actor.kind),x,y+36);
+    }
+    c.restore();
+    const mx=this.width-112,my=this.width<600?this.height-192:16,mw=96,mh=59;c.fillStyle='#fffdf1dc';c.fillRect(mx-5,my-5,mw+10,mh+10);
+    for(const a of h.actors)if(a.respawn<=0){c.fillStyle=h.canEat(a.kind,h.role)?'#dca83c':'#aa7b67';c.fillRect(mx+a.x/HUNT_WIDTH*mw-1,my+a.y/HUNT_HEIGHT*mh-1,3,3);}
+    c.fillStyle='#326b4c';c.beginPath();c.arc(mx+me.x/HUNT_WIDTH*mw,my+me.y/HUNT_HEIGHT*mh,3.5,0,7);c.fill();
+  }
 }
 
 // web-export.js
@@ -1089,7 +1289,7 @@ const $=id=>document.getElementById(id);
 let session=new SoloSession(),started=false,fullMap=false,action=0,target=null,route=[],shownRound=-1,lastUI=0,lastEvent=0,toastUntil=0,resumeAfterHelp=false,resumeAfterSound=false,windowFocused=true;
 const audio=new ForestAudio(),learnerSound=new LearnerSound(audio);
 let roundPuzzle=null;
-let foodWeb=null,webOpen=false;
+let foodWeb=null,webOpen=false,huntView=null;
 const keys=new Set(),joystick={x:0,y:0};let pointer=null;
 const renderer=new Renderer($('field'),(x,y)=>{
   if(session.world.phase!=='playing')return;
@@ -1099,13 +1299,14 @@ function clearControls(){keys.clear();joystick.x=0;joystick.y=0;pointer=null;tar
 function resetView(){renderer.positions={};renderer.motion=new MotionView();renderer.camera=project(session.me.x,session.me.y);}
 function unlockSound(){audio.unlock().then(updateSoundControls);}
 function start(){
+  huntView?.dispose();huntView=null;
   unlockSound();learnerSound.reset();roundPuzzle=null;foodWeb=null;webOpen=false;
   session.start(+$('duration').value,+$('bots').value);started=true;shownRound=-1;action=0;lastEvent=0;toastUntil=0;fullMap=false;clearControls();resetView();
   $('home').hidden=true;$('summaryPanel').hidden=true;updateUI();audio.effect('start');
 }
 function goHome(){
   if(((started&&!session.finished)||(webOpen&&foodWeb?.stage!=='complete'))&&!confirm('처음으로 돌아가면 이번 탐험 기록과 연결한 내용이 지워져요. 돌아갈까요?'))return;
-  audio.silence();
+  audio.silence();huntView?.dispose();huntView=null;
   roundPuzzle=null;foodWeb=null;webOpen=false;
   clearControls();session=new SoloSession();started=false;shownRound=-1;fullMap=false;action=0;lastEvent=0;toastUntil=0;learnerSound.reset();resetView();
   $('home').hidden=false;$('roundPanel').hidden=true;$('summaryPanel').hidden=true;updateUI();
@@ -1127,20 +1328,20 @@ $('mapButton').onclick=()=>{fullMap=!fullMap;updateUI();};
 $('actionButton').onpointerdown=e=>{e.preventDefault();skill();};
 $('actionButton').onclick=e=>{if(e.detail===0)skill();};
 $('fullButton').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{toast('이 기기에서는 브라우저의 전체 화면 기능을 사용해 주세요.');}};
-function showHelp(){resumeAfterHelp=session.pause();clearControls();$('helpDialog').showModal();updateUI();}
+function showHelp(){resumeAfterHelp=session.pause();if(foodWeb?.pause())resumeAfterHelp=true;huntView?.clearInput();clearControls();$('helpDialog').showModal();updateUI();}
 $('helpButton').onclick=showHelp;$('closeHelp').onclick=$('helpDone').onclick=()=>$('helpDialog').close();
-$('helpDialog').onclose=()=>{if(resumeAfterHelp){unlockSound();session.resume();}resumeAfterHelp=false;updateUI();};
+$('helpDialog').onclose=()=>{if(resumeAfterHelp){unlockSound();session.resume();foodWeb?.resume();}resumeAfterHelp=false;updateUI();};
 function updateSoundControls(){
   $('musicEnabled').checked=audio.music;$('effectsEnabled').checked=audio.effects;
   $('soundVolume').value=Math.round(audio.volume*100);$('volumeValue').textContent=`${Math.round(audio.volume*100)}%`;
   const muted=audio.volume===0||(!audio.music&&!audio.effects);
   $('soundButton').textContent=muted?'♪̸':'♫';$('soundButton').setAttribute('aria-label',`소리 설정${muted?' · 꺼짐':''}`);
   $('soundPreview').disabled=!audio.effects||audio.volume===0||!audio.available;
-  $('soundStatus').textContent=!audio.available?'이 브라우저에서는 소리를 사용할 수 없어요. 탐험은 계속할 수 있어요.':muted?'소리가 꺼져 있어요.':!audio.unlocked?'시작 버튼을 누르면 소리가 켜져요.':'BGM은 술래잡기 중에, 효과음은 두 활동에서 나와요. 멈추거나 다른 탭으로 가면 소리도 쉬어요.';
+  $('soundStatus').textContent=!audio.available?'이 브라우저에서는 소리를 사용할 수 없어요. 탐험은 계속할 수 있어요.':muted?'소리가 꺼져 있어요.':!audio.unlocked?'시작 버튼을 누르면 소리가 켜져요.':'BGM과 효과음은 두 숲 게임에서 나와요. 멈추거나 다른 탭으로 가면 소리도 쉬어요.';
 }
-$('soundButton').onclick=()=>{resumeAfterSound=session.pause();clearControls();$('soundDialog').showModal();updateSoundControls();updateUI();};
+$('soundButton').onclick=()=>{resumeAfterSound=session.pause();if(foodWeb?.pause())resumeAfterSound=true;huntView?.clearInput();clearControls();$('soundDialog').showModal();updateSoundControls();updateUI();};
 $('closeSound').onclick=$('soundDone').onclick=()=>$('soundDialog').close();
-$('soundDialog').onclose=()=>{if(resumeAfterSound){unlockSound();session.resume();}resumeAfterSound=false;updateUI();};
+$('soundDialog').onclose=()=>{if(resumeAfterSound){unlockSound();session.resume();foodWeb?.resume();}resumeAfterSound=false;updateUI();};
 function configureSound(){
   unlockSound();audio.configure({music:$('musicEnabled').checked,effects:$('effectsEnabled').checked,volume:+$('soundVolume').value/100});updateSoundControls();
 }
@@ -1159,7 +1360,7 @@ document.addEventListener('keydown',e=>{
   if(key===' '&&!e.repeat)skill();else keys.add(key);
 });
 document.addEventListener('keyup',e=>keys.delete(e.key.startsWith('Arrow')?e.key:e.key.toLowerCase()));
-function backgroundPause(){clearControls();resumeAfterHelp=false;resumeAfterSound=false;session.pause();updateUI();}
+function backgroundPause(){huntView?.backgroundPause();clearControls();resumeAfterHelp=false;resumeAfterSound=false;session.pause();updateUI();}
 window.addEventListener('blur',()=>{windowFocused=false;backgroundPause();});
 window.addEventListener('focus',()=>{windowFocused=true;updateUI();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)backgroundPause();else updateUI();});
@@ -1167,28 +1368,19 @@ for(const id of ['duration','bots'])$(id).onchange=()=>{$('durationNote').textCo
 function toast(message){$('toast').textContent=message;toastUntil=performance.now()+1800;$('toast').hidden=false;}
 function paintRound(){
   const record=session.recordRound(),quiz=quizForRole(session.me.role);shownRound=session.world.round;
-  roundPuzzle=new ChainQuiz(session.me.role);
-  if(record.quizCorrect){for(const id of record.quizOrder)roundPuzzle.add(id);roundPuzzle.check();}
-  $('roundContent').innerHTML=`<span class="eyebrow">${record.round+1} / 4 역할 탐험 완료</span><h2>그림으로 먹이사슬 잇기</h2><div class="mission-result ${record.complete?'complete':''}"><b>${record.complete?'✓ 먹이 미션 성공!':'이번 먹이 미션 기록'}</b><span>${record.food} ${record.count}${record.unit} / 목표 ${record.goal}${record.unit}</span></div><h3>${quiz.question}</h3><div id="chainQuiz"></div><div id="quizAdvance"></div><small class="role-note">학생이 다른 동물 역할을 맡는 놀이예요. 생물이 다른 종류로 변하는 과정은 아니에요.</small>`;
+  roundPuzzle=new PictureQuiz(session.me.role);
+  if(record.quizCorrect)roundPuzzle.choose(record.quizChoice);
+  $('roundContent').innerHTML=`<span class="eyebrow">${record.round+1} / 4 역할 탐험 완료</span><h2>누가 누구를 먹을까요?</h2><div class="mission-result ${record.complete?'complete':''}"><b>${record.complete?'✓ 먹이 미션 성공!':'이번 먹이 미션 기록'}</b><span>${record.food} ${record.count}${record.unit} / 목표 ${record.goal}${record.unit}</span></div><h3>${quiz.question}</h3><div id="chainQuiz"></div><div id="quizAdvance"></div><small class="role-note">학생이 다른 동물 역할을 맡는 놀이예요. 생물이 다른 종류로 변하는 과정은 아니에요.</small>`;
   paintChainQuiz();
 }
 function paintChainQuiz(focusId){
   const puzzle=roundPuzzle,root=$('chainQuiz'),record=session.recordRound();
-  root.innerHTML=chainQuizMarkup(puzzle);
-  for(const button of root.querySelectorAll('[data-organism]'))button.onclick=()=>{
-    if(!puzzle.add(button.dataset.organism))return;
-    const next=puzzle.bank.find(id=>!puzzle.order.includes(id));
-    paintChainQuiz(puzzle.complete?'checkChain':'quizCard-'+next);
-  };
-  for(const button of root.querySelectorAll('[data-slot]'))button.onclick=()=>{
-    if(puzzle.removeFrom(+button.dataset.slot))paintChainQuiz('quizCard-'+puzzle.bank.find(id=>!puzzle.order.includes(id)));
-  };
-  if($('undoChain'))$('undoChain').onclick=()=>{if(puzzle.undo())paintChainQuiz('quizCard-'+puzzle.bank.find(id=>!puzzle.order.includes(id)));};
-  if($('clearChain'))$('clearChain').onclick=()=>{puzzle.clear();paintChainQuiz('quizCard-'+puzzle.bank[0]);};
-  if($('checkChain'))$('checkChain').onclick=()=>{
-    unlockSound();const result=puzzle.check();
-    if(result.status==='correct'&&session.answer(puzzle.order)){audio.effect('correct');paintChainQuiz();$('continueButton').focus();}
-    else{audio.effect('retry');paintChainQuiz(result.wrongAt>=0?'quizSlot-'+result.wrongAt:'quizCard-'+puzzle.bank[0]);}
+  root.innerHTML=pictureQuizMarkup(puzzle);
+  for(const button of root.querySelectorAll('[data-picture-choice]'))button.onclick=()=>{
+    if(puzzle.solved)return;unlockSound();
+    if(puzzle.choose(button.dataset.pictureChoice)&&session.answer(button.dataset.pictureChoice)){
+      audio.effect('correct');paintChainQuiz();$('continueButton').focus();
+    }else{audio.effect('retry');paintChainQuiz('pictureChoice-'+button.dataset.pictureChoice);}
   };
   $('quizAdvance').innerHTML=record.quizCorrect?`<button id="continueButton" class="primary wide">${record.round<3?'다음 역할로 출발하기':'탐험 기록 보기'}</button>`:'';
   if($('continueButton'))$('continueButton').onclick=()=>{
@@ -1203,30 +1395,26 @@ function paintSummary(){
   $('continueToWeb').onclick=openFoodWeb;$('againButton').onclick=goHome;
 }
 function openFoodWeb(){
-  unlockSound();audio.silence();clearControls();foodWeb??=new FoodWebActivity();webOpen=true;$('home').hidden=true;paintFoodWeb();updateUI();
+  unlockSound();audio.silence();clearControls();foodWeb??=new FoodWebActivity();foodWeb.resume();webOpen=true;$('home').hidden=true;paintFoodWeb();updateUI();
 }
 $('openWebDirect').onclick=openFoodWeb;
 function paintFoodWeb(focusId){
+  huntView?.dispose();huntView=null;
   const root=$('webContent'),scrollLeft=$('webBoardScroll')?.scrollLeft||0;
   const expanded=['webConnections','webPaths'].filter(id=>$(id)?.open);
-  root.innerHTML=foodWebMarkup(foodWeb,session.finished);
+  root.classList.toggle('web-playing',foodWeb.stage==='play');root.innerHTML=foodWebMarkup(foodWeb,session.finished);
   const bind=(id,fn)=>{if($(id))$(id).onclick=fn;};
-  for(const button of root.querySelectorAll('[data-web-node]'))button.onclick=()=>{
-    unlockSound();const id=button.dataset.webNode;
-    if(foodWeb.stage==='connect'){
-      const result=foodWeb.select(id);if(result==='added')audio.effect('eat');if(result==='reversed')audio.effect('retry');
-    }else foodWeb.inspect(id);
-    paintFoodWeb('webNode-'+id);
-  };
-  for(const button of root.querySelectorAll('[data-web-remove]'))button.onclick=()=>{foodWeb.remove(...button.dataset.webRemove.split(','));paintFoodWeb();};
+  bind('webBack',()=>{if(session.finished){foodWeb.pause();huntView?.dispose();huntView=null;webOpen=false;paintSummary();updateUI();}else goHome();});
+  if(foodWeb.stage==='play'){
+    huntView=new WebHuntGame($('webHuntField'),foodWeb,{audio,onAdvance:()=>{paintFoodWeb();root.scrollTop=0;updateUI();},onUpdate:updateUI});
+    updateUI();return;
+  }
+  for(const button of root.querySelectorAll('[data-web-node]'))button.onclick=()=>{foodWeb.inspect(button.dataset.webNode);paintFoodWeb('webNode-'+button.dataset.webNode);};
   for(const button of root.querySelectorAll('[data-web-path]'))button.onclick=()=>{foodWeb.showPath(+button.dataset.webPath);paintFoodWeb();};
   for(const button of root.querySelectorAll('[data-web-alternative]'))button.onclick=()=>{
     unlockSound();audio.effect(foodWeb.answerAlternative(button.dataset.webAlternative)?'correct':'retry');paintFoodWeb();
   };
-  bind('beginWeb',()=>{foodWeb.begin();paintFoodWeb();root.scrollTop=0;});
-  bind('webUndo',()=>{foodWeb.undo();paintFoodWeb();});
-  bind('webReset',()=>{foodWeb.reset();paintFoodWeb();});
-  bind('webCheck',()=>{unlockSound();audio.effect(foodWeb.check()?'mission':'retry');paintFoodWeb();});
+  bind('beginWeb',()=>{unlockSound();foodWeb.begin();paintFoodWeb();root.scrollTop=0;});
   bind('toggleFrog',()=>{foodWeb.toggleFrog();paintFoodWeb();});
   if($('webReflection'))$('webReflection').oninput=()=>{
     foodWeb.setReflection($('webReflection').value);$('webNext').disabled=!foodWeb.reflection.trim();$('webWritingCount').textContent=`${foodWeb.reflection.length} / 180자 · 쓴 내용은 이 기기 안에만 남아요.`;
@@ -1236,14 +1424,14 @@ function paintFoodWeb(focusId){
     try{downloadFoodWebReport(foodWeb);$('webSaveStatus').textContent='먹이그물과 나의 생각을 한 장의 그림으로 저장했어요.';}
     catch(error){$('webSaveStatus').textContent=error.message||'저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.';}
   });
-  bind('webBack',()=>{if(session.finished){webOpen=false;paintSummary();updateUI();}else goHome();});
   for(const id of expanded)if($(id))$(id).open=true;
   if($('webBoardScroll'))$('webBoardScroll').scrollLeft=scrollLeft;
   if(focusId)$(focusId)?.focus({preventScroll:true});
 }
 function updateUI(){
   const world=session.world,me=session.me,active=started&&!session.finished&&!webOpen,mission=missionFor(me,world.duration);
-  audio.setScene(started&&world.phase==='playing',!document.hidden&&windowFocused);
+  const huntPlaying=webOpen&&foodWeb?.stage==='play'&&foodWeb.hunt.phase==='playing';
+  audio.setScene((started&&world.phase==='playing'||huntPlaying)&&!$('helpDialog').open&&!$('soundDialog').open,!document.hidden&&windowFocused);
   if(started)learnerSound.observe(world,mission);
   $('hud').hidden=!active;$('controls').hidden=!active||world.phase!=='playing';$('roundClock').hidden=!started||webOpen;
   for(const id of ['pauseButton','mapButton'])$(id).hidden=!started||webOpen;
@@ -1269,6 +1457,7 @@ function frame(now){
       accumulator+=elapsed;
       while(accumulator>=SIMULATION_STEP&&session.world.phase==='playing'){renderer.motion.capture(session.world);session.tick(input(),SIMULATION_STEP);accumulator-=SIMULATION_STEP;}
     }else accumulator=0;
+    if(webOpen&&huntView)huntView.frame(elapsed,now);
     if(!webOpen)renderer.draw(session.world,started?'me':null,!started||fullMap,{alpha:accumulator/SIMULATION_STEP});
     if(now-lastUI>=80){lastUI=now;updateUI();}
     if(toastUntil&&now>=toastUntil){$('toast').hidden=true;toastUntil=0;}

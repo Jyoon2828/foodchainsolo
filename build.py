@@ -11,7 +11,7 @@ for animal in ['mouse', 'sparrow']:
     images[animal] = 'data:image/png;base64,' + base64.b64encode((SOURCE / 'assets' / (animal + '.png')).read_bytes()).decode()
 modules = ['engine.js', 'projection.js', 'quiz.js', 'quiz-view.js', 'asset-frames.js',
            'motion-view.js', 'render.js', 'solo-state.js', 'audio.js',
-           'food-web.js', 'web-art.js', 'web-view.js', 'web-export.js', 'solo.js']
+           'web-hunt.js', 'food-web.js', 'web-art.js', 'web-view.js', 'web-hunt-view.js', 'web-export.js', 'solo.js']
 parts = []
 for name in modules:
     source = (SOURCE / name).read_text()

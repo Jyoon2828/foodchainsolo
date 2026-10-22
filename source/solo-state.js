@@ -1,10 +1,10 @@
 import {createWorld,addPlayer,startRound,step,missionFor} from './engine.js';
-import {isCorrect} from './quiz.js';
+import {isCorrect,quizForRole} from './quiz.js';
 
 export class SoloSession{
   constructor(){this.start();this.world.phase='ready';}
   start(duration=90,bots=3){
-    this.world=createWorld(duration,bots);this.me=addPlayer(this.world,'me',{label:'나'});
+    this.world=createWorld(duration,bots);this.world.solo=true;this.me=addPlayer(this.world,'me',{label:'나'});
     this.records=[];this.finished=false;startRound(this.world,0);return this.world;
   }
   tick(input,dt){
@@ -19,7 +19,7 @@ export class SoloSession{
   }
   answer(choice){
     if(this.world.phase!=='between'||!isCorrect(this.me.role,choice))return false;
-    this.recordRound().quizCorrect=true;return true;
+    const record=this.recordRound();record.quizCorrect=true;record.quizChoice=choice;record.quizOrder=[...quizForRole(this.me.role).chain];return true;
   }
   next(){
     if(this.world.phase!=='between'||!this.recordRound().quizCorrect)return false;
